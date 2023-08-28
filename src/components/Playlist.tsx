@@ -1,22 +1,14 @@
-import { useEffect, useState } from 'react';
-import { fetchPlaylist } from '../services/api';
+import { usePlaylistQuery } from '../services/hooks/usePlaylistQuery';
 
 export const Playlist = ({ handleChannel }: { handleChannel: (channel: any) => void }) => {
-  const [playlist, setPlaylist] = useState<any>([])
+  const { data } = usePlaylistQuery()
 
-  useEffect(() => {
-    const getPlaylist = async () => {
-      const data = await fetchPlaylist()
-      setPlaylist(data)
-    }
-    getPlaylist()
-  }, [])
   return (
-    <ul>
-      {playlist?.map((channel: any) => {
+    <ul style={{ height: '300px', overflow: 'auto' }}>
+      {data?.map((channel: any) => {
         return (
-          <li key={channel.id} style={{ cursor: 'pointer' }} onClick={() => handleChannel(channel)}>
-            <p>{channel.title}</p></li>
+          <li key={channel.url + channel.id} style={{ cursor: 'pointer' }} onClick={() => handleChannel(channel)}>
+            <p>{channel.name}</p></li>
         )
       })}
     </ul>

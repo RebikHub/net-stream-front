@@ -7,7 +7,7 @@ import 'video.js/dist/video-js.css';
 //   type: 'application/x-mpegURL'
 // });
 
-export const VideoPlayer = ({ options, onReady }: { options: any, onReady: any }) => {
+export const VideoPlayer = ({ options }: { options: any }) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
 
@@ -24,7 +24,6 @@ export const VideoPlayer = ({ options, onReady }: { options: any, onReady: any }
       // @ts-ignore
       const player = playerRef.current = videojs(videoElement, options, () => {
         videojs.log('player is ready');
-        onReady && onReady(player);
       });
 
       // You could update an existing player in the `else` block here
