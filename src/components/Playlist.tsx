@@ -1,6 +1,7 @@
-import { usePlaylistQuery } from '../services/hooks/usePlaylistQuery';
+import { FailedUrlType } from '../services/hls-hook/useHls';
+import { usePlaylistQuery } from '../services/query-hooks/usePlaylistQuery';
 
-export const Playlist = ({ handleChannel }: { handleChannel: (channel: any) => void }) => {
+export const Playlist = ({ handleChannel, urlFailed }: { handleChannel: (channel: any) => void, urlFailed: FailedUrlType }) => {
   const { data } = usePlaylistQuery()
 
   return (
@@ -8,7 +9,8 @@ export const Playlist = ({ handleChannel }: { handleChannel: (channel: any) => v
       {data?.map((channel: any) => {
         return (
           <li key={channel.url + channel.id} style={{ cursor: 'pointer' }} onClick={() => handleChannel(channel)}>
-            <p>{channel.name}</p></li>
+            <p>{channel.name}  {channel.url === urlFailed.url ? `${urlFailed.failed}` : 'none'}</p>
+          </li>
         )
       })}
     </ul>

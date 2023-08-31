@@ -1,7 +1,10 @@
-import { useRef, useState } from 'react';
-import { useUpdateTvStreamQuery } from '../services/hooks/useUpdateTvStreamQuery';
+import { useRef, useState, useCallback } from 'react';
+import { useUpdateTvStreamQuery } from '../services/query-hooks/useUpdateTvStreamQuery';
 import { Playlist } from '../components/Playlist';
-import { VideoPlayer } from '../components/VideoPlayer';
+import { Video } from '../components/Video';
+import { FailedUrlType } from '../services/hls-hook/useHls';
+import { usePlaylistQuery } from '../services/query-hooks/usePlaylistQuery';
+// import { VideoPlayer } from '../components/VideoPlayer';
 
 
 export type VideoOptionsType = {
@@ -9,6 +12,7 @@ export type VideoOptionsType = {
   controls: boolean;
   responsive: boolean;
   fluid: boolean;
+  sourceUrl: string;
   sources: {
     src: string;
     type: string[];
@@ -18,11 +22,14 @@ export type VideoOptionsType = {
 export const Home = () => {
   // const videoSource = 'https://sc.id-tv.kz/1hd.m3u8';
   // const urltv = 'http://ott-cdn.ucom.am/s64/index.m3u8'
+  // const { data } = usePlaylistQuery()
+
   const [videOptions, setVideoOptions] = useState<VideoOptionsType>({
     autoplay: true,
     controls: true,
     responsive: true,
     fluid: true,
+    sourceUrl: '',
     sources: [{
       src: '',
       // type: 'video/mp4'
@@ -30,11 +37,16 @@ export const Home = () => {
       type: ['application/x-mpegURL', 'video/mp4']
     }]
   })
-  const playerRef = useRef(null);
+  const [urlFailed, setUrlFailed] = useState({
+    url: videOptions.sourceUrl,
+    failed: false
+  })
+  // const playerRef = useRef(null);
 
   const handleChannel = (channel: any) => {
     setVideoOptions((prev) => ({
       ...prev,
+      sourceUrl: channel.url,
       sources: [
         {
           src: channel.url,
@@ -44,6 +56,11 @@ export const Home = () => {
     }))
   }
 
+  const handleFailedUrl = useCallback((failedUrl: FailedUrlType) => {
+    console.log('handleFailedUrl: ', failedUrl);
+
+    setUrlFailed(failedUrl)
+  }, [])
 
   const { refetch } = useUpdateTvStreamQuery()
 
@@ -53,11 +70,11 @@ export const Home = () => {
 
   return (
     <main>
-      <h1>Video Streaming</h1>
-      <Playlist handleChannel={handleChannel} />
-      {/* <Video options={videOptions} /> */}
-      <VideoPlayer options={videOptions} />
-      <button onClick={handleUpdateTvStreams}>Update tv streams</button>
+      <header style={{ display: 'flex' }}>      <h1>Video Streaming</h1>
+        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={handleUpdateTvStreams}>Update tv streams</button></header>
+      <Playlist handleChannel={handleChannel} urlFailed={urlFailed} />
+      <Video options={videOptions} handleFailedUrl={handleFailedUrl} />
+      {/* <VideoPlayer options={videOptions} /> */}
     </main>
   );
 }
