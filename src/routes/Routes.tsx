@@ -4,13 +4,14 @@ import { Tv } from "../pages/Tv"
 // import TorrentComponent from "../pages/torrent/Torrent"
 // import { Video } from "../components/Video"
 import { Main } from "../pages/Main"
+import { Stream } from "../pages/Stream"
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Main />} />
       <Route path='/tv' element={<Tv />} />
-      <Route path="/video" element={<div />} />
+      <Route path="/video" element={<Stream />} />
     </Routes>
   )
 }

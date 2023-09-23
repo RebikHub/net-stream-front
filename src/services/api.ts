@@ -1,6 +1,6 @@
-async function baseApi(url: string) {
+async function baseApi(url: string, config?: any) {
   try {
-    const response = await fetch(process.env.REACT_APP_API_URL + url);
+    const response = await fetch(process.env.REACT_APP_API_URL + url, config);
 
     if (!response.ok) {
       throw new Error('Failed to fetch playlist');
@@ -20,4 +20,15 @@ export const getPlaylist = async () => {
 
 export const getUpdateTvStreams = async () => {
   return await baseApi('/tv/update')
+}
+
+export const postTorrentLink = async (magnetLink: string) => {
+  return await baseApi('/video/download', {
+    method: "POST",
+    headers: { "Content-Type": "application/json", },
+    body: JSON.stringify({
+      magnetLink
+    }
+    )
+  })
 }
