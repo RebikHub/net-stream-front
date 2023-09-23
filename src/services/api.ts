@@ -32,3 +32,21 @@ export const postTorrentLink = async (magnetLink: string) => {
     )
   })
 }
+
+
+export const getSSEData = async (setData: any) => {
+
+  // Парсим поток событий (SSE)
+  const eventSource = new EventSource(process.env.REACT_APP_API_URL + '/video/stats');
+
+  // Назначаем обработчик для сообщений от сервера SSE
+  eventSource.addEventListener('message', (event) => {
+    setData(event.data);
+  });
+
+  // Закрыть соединение SSE при размонтировании компонента
+  return () => {
+    eventSource.close();
+  };
+
+};
