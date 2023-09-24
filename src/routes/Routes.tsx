@@ -5,6 +5,7 @@ import { Tv } from "../pages/Tv"
 // import { Video } from "../components/Video"
 import { Main } from "../pages/Main"
 import { Stream } from "../pages/Stream"
+import VueStream from "../pages/VueStream"
 
 export const AppRoutes = () => {
   return (
@@ -12,6 +13,7 @@ export const AppRoutes = () => {
       <Route path="/" element={<Main />} />
       <Route path='/tv' element={<Tv />} />
       <Route path="/video" element={<Stream />} />
+      <Route path="/stream" element={<VueStream />} />
     </Routes>
   )
 }

@@ -10,7 +10,7 @@ export const Stream = () => {
 
   const { data, refetch } = useQuery({
     queryKey: [input],
-    queryFn: () => postTorrentLink(u1),
+    queryFn: () => postTorrentLink(input),
     enabled: false
   })
 
