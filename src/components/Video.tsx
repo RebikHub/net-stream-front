@@ -12,14 +12,6 @@ export const Video = ({ options, handleFailedUrl }: { options: VideoOptionsType,
   }, [handleFailedUrl, urlFailed])
 
   return (
-    // <video ref={videoRef} style={{ width: '900px', height: '600px' }} autoPlay={options.autoplay} controls={options.controls}>
-    //   {
-    //     options.sources.map((source, i) => (
-    //       <source key={i} src={source.src} type={'video/mp4'} />
-    //     ))
-    //   }
-    // </video>
-
     <video ref={videoRef} style={{ width: '900px', height: '600px' }} autoPlay controls></video>
   )
 }

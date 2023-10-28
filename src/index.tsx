@@ -11,3 +11,5 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+navigator.serviceWorker.register('./service-worker.js')
