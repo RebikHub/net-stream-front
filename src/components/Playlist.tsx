@@ -9,6 +9,9 @@ export const Playlist = ({ handleChannel, urlFailed }: { handleChannel: (channel
       {data?.map((channel: any) => {
         return (
           <li key={channel.url + channel.id} style={{ cursor: 'pointer' }} onClick={() => handleChannel(channel)}>
+            {channel.logo && <div style={{ width: '30px', height: '30px' }}>
+              <image style={{ width: '30px', height: '30px' }} href={channel.logo} />
+            </div>}
             <p>{channel.name}  {channel.url === urlFailed.url ? `${urlFailed.failed}` : 'none'}</p>
           </li>
         )

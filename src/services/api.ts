@@ -1,6 +1,6 @@
 async function baseApi(url: string, config?: any) {
   try {
-    const response = await fetch(process.env.REACT_APP_API_URL + url, config);
+    const response = await fetch(import.meta.env.VITE_API_URL + url, config);
 
     if (!response.ok) {
       throw new Error('Failed to fetch playlist');
@@ -37,7 +37,7 @@ export const postTorrentLink = async (magnetLink: string) => {
 export const getSSEData = async (setData: any) => {
 
   // Парсим поток событий (SSE)
-  const eventSource = new EventSource(process.env.REACT_APP_API_URL + '/video/stats');
+  const eventSource = new EventSource(import.meta.env.VITE_API_URL + '/video/stats');
 
   // Назначаем обработчик для сообщений от сервера SSE
   eventSource.addEventListener('message', (event) => {
