@@ -1,6 +1,10 @@
+import { ChannelListUrl } from "./query-hooks/types";
+
+const baseUrl = import.meta.env.VITE_API_URL
+
 async function baseApi(url: string, config?: any) {
   try {
-    const response = await fetch(import.meta.env.VITE_API_URL + url, config);
+    const response = await fetch(baseUrl + url, config);
 
     if (!response.ok) {
       throw new Error('Failed to fetch playlist');
@@ -14,9 +18,25 @@ async function baseApi(url: string, config?: any) {
   }
 };
 
-export const getPlaylist = async () => {
-  return await baseApi('/tv/playlist')
+export const getPlaylist = async (list: ChannelListUrl) => {
+  return await baseApi(`/tv/playlist/${list}`)
 }
+
+// export const getPlaylistRu = async () => {
+//   return await baseApi('/tv/playlist/ru')
+// }
+
+// export const getPlaylistEn = async () => {
+//   return await baseApi('/tv/playlist/en')
+// }
+
+// export const getPlaylistNsfw = async () => {
+//   return await baseApi('/tv/playlist/nsfw')
+// }
+
+// export const getPlaylistNoname = async () => {
+//   return await baseApi('/tv/playlist/noname')
+// }
 
 export const getUpdateTvStreams = async () => {
   return await baseApi('/tv/update')
@@ -37,7 +57,7 @@ export const postTorrentLink = async (magnetLink: string) => {
 export const getSSEData = async (setData: any) => {
 
   // Парсим поток событий (SSE)
-  const eventSource = new EventSource(import.meta.env.VITE_API_URL + '/video/stats');
+  const eventSource = new EventSource(baseUrl + '/video/stats');
 
   // Назначаем обработчик для сообщений от сервера SSE
   eventSource.addEventListener('message', (event) => {
