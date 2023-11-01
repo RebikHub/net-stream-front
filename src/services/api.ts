@@ -22,24 +22,18 @@ export const getPlaylist = async (list: ChannelListUrl) => {
   return await baseApi(`/tv/playlist/${list}`)
 }
 
-// export const getPlaylistRu = async () => {
-//   return await baseApi('/tv/playlist/ru')
-// }
-
-// export const getPlaylistEn = async () => {
-//   return await baseApi('/tv/playlist/en')
-// }
-
-// export const getPlaylistNsfw = async () => {
-//   return await baseApi('/tv/playlist/nsfw')
-// }
-
-// export const getPlaylistNoname = async () => {
-//   return await baseApi('/tv/playlist/noname')
-// }
-
 export const getUpdateTvStreams = async () => {
   return await baseApi('/tv/update')
+}
+
+// video stream
+
+export const getVideoStream = async (magnetLink: string) => {
+  return await baseApi(`/video/stream/${magnetLink}`)
+}
+
+export const getPlayVideoStream = async (name: string, link: string) => {
+  return await baseApi(`/video/${name}/${link}`)
 }
 
 export const postTorrentLink = async (magnetLink: string) => {

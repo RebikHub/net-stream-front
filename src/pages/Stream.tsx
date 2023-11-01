@@ -18,8 +18,6 @@ export const Stream = () => {
 
   console.log(data);
 
-
-
   return (
     <>
       <div>
