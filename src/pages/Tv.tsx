@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react"
-import { Playlist } from "../components/Playlist"
-import { Video } from "../components/Video"
-import { VideoOptionsType } from "./Home"
-import { FailedUrlType } from "../services/hls-hook/useHls"
-import { useUpdateTvStreamQuery } from "../services/query-hooks/useUpdateTvStreamQuery"
-import { usePlaylistQuery } from "../services/query-hooks/usePlaylistQuery"
-import { ChannelListUrl } from "../services/query-hooks/types"
+import { useCallback, useState } from 'react';
+import { Playlist } from '../components/Playlist';
+import { Video } from '../components/Video';
+import { VideoOptionsType } from './Home';
+import { FailedUrlType } from '../services/hls-hook/useHls';
+import { useUpdateTvStreamQuery } from '../services/query-hooks/useUpdateTvStreamQuery';
+import { usePlaylistQuery } from '../services/query-hooks/usePlaylistQuery';
+import { ChannelListUrl } from '../services/query-hooks/types';
 
 export const Tv = () => {
   // const videoSource = 'https://sc.id-tv.kz/1hd.m3u8';
@@ -18,17 +18,19 @@ export const Tv = () => {
     responsive: true,
     fluid: true,
     sourceUrl: '',
-    sources: [{
-      src: '',
-      // type: 'video/mp4'
-      // type: 'application/x-mpegURL'
-      type: ['application/x-mpegURL', 'video/mp4']
-    }]
-  })
+    sources: [
+      {
+        src: '',
+        // type: 'video/mp4'
+        // type: 'application/x-mpegURL'
+        type: ['application/x-mpegURL', 'video/mp4'],
+      },
+    ],
+  });
   const [urlFailed, setUrlFailed] = useState({
     url: videOptions.sourceUrl,
-    failed: false
-  })
+    failed: false,
+  });
   // const playerRef = useRef(null);
 
   const handleChannel = (channel: any) => {
@@ -38,40 +40,43 @@ export const Tv = () => {
       sources: [
         {
           src: channel.url,
-          type: ['application/x-mpegURL', 'video/mp4']
-        }
-      ]
-    }))
-  }
+          type: ['application/x-mpegURL', 'video/mp4'],
+        },
+      ],
+    }));
+  };
 
   const handleFailedUrl = useCallback((failedUrl: FailedUrlType) => {
     console.log('handleFailedUrl: ', failedUrl);
 
-    setUrlFailed(failedUrl)
-  }, [])
+    setUrlFailed(failedUrl);
+  }, []);
 
-  const { refetch } = useUpdateTvStreamQuery()
-  const [list, setList] = useState<ChannelListUrl>()
+  const { refetch } = useUpdateTvStreamQuery();
+  const [list, setList] = useState<ChannelListUrl>();
 
   function handleUpdateTvStreams() {
-    refetch()
+    refetch();
   }
 
   return (
-    <>
+    <div>
       <header style={{ display: 'flex' }}>
-        <h1>Video Streaming</h1>
+        <h4>Video Streaming</h4>
         <div>
           <button onClick={() => setList(ChannelListUrl.ru)}>RU Channels</button>
           <button onClick={() => setList(ChannelListUrl.en)}>EN Channels</button>
           {/* <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button> */}
           <button onClick={() => setList(ChannelListUrl.noname)}>Noname Channels</button>
         </div>
-        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={handleUpdateTvStreams}>Update tv streams</button>
+        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={handleUpdateTvStreams}>
+          Update tv streams
+        </button>
       </header>
-      <Playlist handleChannel={handleChannel} urlFailed={urlFailed} list={list} />
-      <Video options={videOptions} handleFailedUrl={handleFailedUrl} />
-      {/* <VideoPlayer options={videOptions} /> */}
-    </>
-  )
-}
+      <main>
+        <Playlist handleChannel={handleChannel} urlFailed={urlFailed} list={list} />
+        <Video options={videOptions} handleFailedUrl={handleFailedUrl} />
+      </main>
+    </div>
+  );
+};

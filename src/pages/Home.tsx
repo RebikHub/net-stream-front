@@ -1,12 +1,6 @@
-import { useRef, useState, useCallback } from 'react';
-import { useUpdateTvStreamQuery } from '../services/query-hooks/useUpdateTvStreamQuery';
-import { Playlist } from '../components/Playlist';
-import { Video } from '../components/Video';
-import { FailedUrlType } from '../services/hls-hook/useHls';
-import { usePlaylistQuery } from '../services/query-hooks/usePlaylistQuery';
-import { AppRoutes } from '../routes/Routes';
-// import { VideoPlayer } from '../components/VideoPlayer';
-
+import { Outlet } from 'react-router-dom';
+import { Header } from './Header';
+import css from './Header.module.css';
 
 export type VideoOptionsType = {
   autoplay: boolean;
@@ -18,12 +12,15 @@ export type VideoOptionsType = {
     src: string;
     type: string[];
   }[];
-}
+};
 
 export const Home = () => {
   return (
     <main>
-      <AppRoutes />
+      <Header />
+      <div className={css.main}>
+        <Outlet />
+      </div>
     </main>
   );
-}
+};

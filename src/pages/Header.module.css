@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background-color: darkslateblue;
+}
+
+.header a {
+  text-decoration: none;
+  color: burlywood;
+  font-size: x-large;
+  transition: all 1000ms ease-in-out;
+}
+
+.header a:hover {
+  text-decoration: underline;
+}
