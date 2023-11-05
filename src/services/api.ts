@@ -1,6 +1,6 @@
 import { ChannelListUrl } from "./query-hooks/types";
 
-const baseUrl = import.meta.env.VITE_API_URL
+const baseUrl = process.env.REACT_APP_API_URL
 
 async function baseApi(url: string, config?: any) {
   try {

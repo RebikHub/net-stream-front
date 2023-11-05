@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Playlist } from '../components/Playlist';
 import { Video } from '../components/Video';
 import { VideoOptionsType } from './Home';
@@ -55,9 +55,7 @@ export const Tv = () => {
   const { refetch } = useUpdateTvStreamQuery();
   const [list, setList] = useState<ChannelListUrl>();
 
-  function handleUpdateTvStreams() {
-    refetch();
-  }
+  // при переходе на другую страницу продолжает подгружать данные тв канала
 
   return (
     <div>
@@ -69,7 +67,7 @@ export const Tv = () => {
           {/* <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button> */}
           <button onClick={() => setList(ChannelListUrl.noname)}>Noname Channels</button>
         </div>
-        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={handleUpdateTvStreams}>
+        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={() => refetch()}>
           Update tv streams
         </button>
       </header>
