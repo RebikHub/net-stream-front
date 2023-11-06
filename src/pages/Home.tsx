@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import css from './Header.module.css';
+import { useHls } from '../services/hls-hook/useHls';
 
 export type VideoOptionsType = {
   autoplay: boolean;

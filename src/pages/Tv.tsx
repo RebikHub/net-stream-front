@@ -4,14 +4,9 @@ import { Video } from '../components/Video';
 import { VideoOptionsType } from './Home';
 import { FailedUrlType } from '../services/hls-hook/useHls';
 import { useUpdateTvStreamQuery } from '../services/query-hooks/useUpdateTvStreamQuery';
-import { usePlaylistQuery } from '../services/query-hooks/usePlaylistQuery';
 import { ChannelListUrl } from '../services/query-hooks/types';
 
 export const Tv = () => {
-  // const videoSource = 'https://sc.id-tv.kz/1hd.m3u8';
-  // const urltv = 'http://ott-cdn.ucom.am/s64/index.m3u8'
-  // const { data } = usePlaylistQuery()
-
   const [videOptions, setVideoOptions] = useState<VideoOptionsType>({
     autoplay: true,
     controls: true,
@@ -21,8 +16,6 @@ export const Tv = () => {
     sources: [
       {
         src: '',
-        // type: 'video/mp4'
-        // type: 'application/x-mpegURL'
         type: ['application/x-mpegURL', 'video/mp4'],
       },
     ],
@@ -33,7 +26,7 @@ export const Tv = () => {
   });
   // const playerRef = useRef(null);
 
-  const handleChannel = (channel: any) => {
+  const handleChannel = async (channel: any) => {
     setVideoOptions((prev) => ({
       ...prev,
       sourceUrl: channel.url,
@@ -44,6 +37,8 @@ export const Tv = () => {
         },
       ],
     }));
+    // const response = await getChannelParser(channel.url);
+    // console.log('parser: ', response);
   };
 
   const handleFailedUrl = useCallback((failedUrl: FailedUrlType) => {
@@ -55,9 +50,7 @@ export const Tv = () => {
   const { refetch } = useUpdateTvStreamQuery();
   const [list, setList] = useState<ChannelListUrl>();
 
-  function handleUpdateTvStreams() {
-    refetch();
-  }
+  // при переходе на другую страницу продолжает подгружать данные тв канала
 
   return (
     <div>
@@ -66,10 +59,10 @@ export const Tv = () => {
         <div>
           <button onClick={() => setList(ChannelListUrl.ru)}>RU Channels</button>
           <button onClick={() => setList(ChannelListUrl.en)}>EN Channels</button>
-          {/* <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button> */}
+          <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button>
           <button onClick={() => setList(ChannelListUrl.noname)}>Noname Channels</button>
         </div>
-        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={handleUpdateTvStreams}>
+        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={() => refetch()}>
           Update tv streams
         </button>
       </header>
