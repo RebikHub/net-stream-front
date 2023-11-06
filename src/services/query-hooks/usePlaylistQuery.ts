@@ -15,9 +15,6 @@ export function usePlaylistQuery(list?: ChannelListUrl) {
     refetchOnWindowFocus: false,
   })
 
-  console.log(`${QueryKeys.GetPlaylist}/${list}`);
-
-
   return useMemo(() => ({
     isError, isLoading, data, refetch
   }), [data, isError, isLoading, refetch])

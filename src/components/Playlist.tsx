@@ -19,7 +19,7 @@ export const Playlist: FC<Props> = ({ handleChannel, urlFailed, list }) => {
           <li key={channel.url + channel.id} style={{ cursor: 'pointer' }} onClick={() => handleChannel(channel)}>
             {channel.logo && (
               <div style={{ width: '30px', height: '30px' }}>
-                <image style={{ width: '30px', height: '30px' }} href={channel.logo} />
+                <img style={{ width: '30px', height: '30px' }} src={channel.logo} alt={channel.name} />
               </div>
             )}
             <p>

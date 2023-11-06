@@ -17,4 +17,4 @@ if (root) {
   console.error('Root element not found');
 }
 
-serviceWorkerRegistration.register();
+serviceWorkerRegistration.unregister();

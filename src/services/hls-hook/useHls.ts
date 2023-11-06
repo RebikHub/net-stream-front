@@ -1,12 +1,17 @@
 import Hls from "hls.js";
-import { RefObject, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useState } from "react";
 
 export type FailedUrlType = {
   url: string,
   failed: boolean
 }
 
-export const useHls = ({ ref, url }: { ref: RefObject<HTMLVideoElement>, url: string }) => {
+type HookHls = {
+  ref: RefObject<HTMLVideoElement>;
+  url: string;
+}
+
+export const useHls = ({ ref, url }: HookHls) => {
   const hls = useMemo(() => new Hls(), []);
   const [urlFailed, setUrlFailed] = useState<FailedUrlType>({
     url,
@@ -16,15 +21,17 @@ export const useHls = ({ ref, url }: { ref: RefObject<HTMLVideoElement>, url: st
   if (Hls.isSupported() && ref.current) {
     hls.attachMedia(ref.current);
 
-    hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      console.log('video and hls.js are now bound together !');
-    });
+    // hls.on(Hls.Events.MEDIA_ATTACHED, (event, data) => {
+    //   console.log('video and hls.js are now bound together !', data);
+    // });
 
-    hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-      console.log(
-        'manifest loaded, found ' + data.levels.length + ' quality level',
-      );
-    });
+    // hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+    //   console.log('manifest-parsed: ', data);
+    // });
+
+    // hls.on(Hls.Events.MANIFEST_LOADED, function (event, data) {
+    //   console.log('Имя канала:', data.levels[0]);
+    // });
 
     hls.on(Hls.Events.ERROR, (event, data) => {
       console.log('error-type: ', data.type);
@@ -56,6 +63,13 @@ export const useHls = ({ ref, url }: { ref: RefObject<HTMLVideoElement>, url: st
     hls.loadSource(url);
   }, [hls, url])
 
+  useEffect(() => {
 
-  return urlFailed
+    return () => {
+      hls.stopLoad()
+    }
+  }, [hls])
+
+
+  return { urlFailed }
 }
