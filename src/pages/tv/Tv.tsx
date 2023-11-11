@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
-import { Playlist } from '../components/Playlist';
-import { Video } from '../components/Video';
-import { VideoOptionsType } from './Home';
-import { FailedUrlType } from '../services/hls-hook/useHls';
-import { useUpdateTvStreamQuery } from '../services/query-hooks/useUpdateTvStreamQuery';
-import { ChannelListUrl } from '../services/query-hooks/types';
+import { Playlist } from '../../components/playlist/Playlist';
+import { Video } from '../../components/video/Video';
+import { VideoOptionsType } from '../home/Home';
+import { FailedUrlType } from '../../services/hls-hook/useHls';
+import { useUpdateTvStreamQuery } from '../../services/query-hooks/useUpdateTvStreamQuery';
+import { ChannelListUrl } from '../../services/query-hooks/types';
+import css from './Tv.module.scss';
 
 export const Tv = () => {
   const [videOptions, setVideoOptions] = useState<VideoOptionsType>({
@@ -53,22 +54,22 @@ export const Tv = () => {
   // при переходе на другую страницу продолжает подгружать данные тв канала
 
   return (
-    <div>
-      <header style={{ display: 'flex' }}>
-        <h4>Video Streaming</h4>
-        <div>
+    <div className={css.container}>
+      <header className={css.header}>
+        <h4>Tv Streaming</h4>
+        <div className={css.buttons}>
           <button onClick={() => setList(ChannelListUrl.ru)}>RU Channels</button>
           <button onClick={() => setList(ChannelListUrl.en)}>EN Channels</button>
           <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button>
           <button onClick={() => setList(ChannelListUrl.noname)}>Noname Channels</button>
+          <button className={css.buttonUpdate} onClick={() => refetch()}>
+            Update tv streams
+          </button>
         </div>
-        <button style={{ height: '50px', marginLeft: '50px', margin: 'auto' }} onClick={() => refetch()}>
-          Update tv streams
-        </button>
       </header>
-      <main>
-        <Playlist handleChannel={handleChannel} urlFailed={urlFailed} list={list} />
-        <Video options={videOptions} handleFailedUrl={handleFailedUrl} />
+      <main className={css.main}>
+        <Playlist className={css.playlist} handleChannel={handleChannel} urlFailed={urlFailed} list={list} />
+        <Video className={css.video} options={videOptions} handleFailedUrl={handleFailedUrl} />
       </main>
     </div>
   );

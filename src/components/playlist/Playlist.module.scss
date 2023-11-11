@@ -1,0 +1,29 @@
+.list {
+  width: 900px;
+  height: 300px;
+  overflow: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid grey;
+
+  &:hover {
+    background-color: aliceblue;
+  }
+
+  & div {
+    width: 30px;
+    height: 30px;
+
+    & img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}

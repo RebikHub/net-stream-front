@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useStreamServer } from '../services/web-torrent/server';
-import { getSSEData, getStreamStop } from '../services/api';
+import { useEffect, useRef, useState } from 'react';
+import { useStreamServer } from '../../services/web-torrent/server';
+import { getSSEData, getStreamStop } from '../../services/api';
+import css from './Stream.module.scss';
 
-const VideoStream = () => {
+export const Stream = () => {
   const infoHash = '8FD93E1A5B18EBF27972E3E8650CD577C9075AC7'; // Замените на свою магнет-ссылку
   const name = 'John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4';
   const [input, setInput] = useState('');
@@ -43,16 +44,16 @@ const VideoStream = () => {
   });
 
   return (
-    <div>
-      <video src={activeUrl} controls width="640" height="360" />
-      <div>
-        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} />
-        <button onClick={play}>Play</button>
-        <button onClick={cancel}>Cancel</button>
-        <button onClick={stop}>Stop</button>
+    <div className={css.container}>
+      <video className={css.video} src={activeUrl} controls />
+      <div className={css.controls}>
+        <input className={css.input} type="text" value={input} onChange={(e) => setInput(e.target.value)} />
+        <div className={css.buttons}>
+          <button onClick={play}>Play</button>
+          <button onClick={cancel}>Cancel</button>
+          <button onClick={stop}>Stop</button>
+        </div>
       </div>
     </div>
   );
 };
-
-export default VideoStream;
