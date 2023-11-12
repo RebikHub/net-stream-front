@@ -45,14 +45,30 @@ export const Stream = () => {
 
   return (
     <div className={css.container}>
-      <video className={css.video} src={activeUrl} controls />
-      <div className={css.controls}>
-        <input className={css.input} type="text" value={input} onChange={(e) => setInput(e.target.value)} />
-        <div className={css.buttons}>
-          <button onClick={play}>Play</button>
-          <button onClick={cancel}>Cancel</button>
-          <button onClick={stop}>Stop</button>
+      <h4 className={css.header}>Video Stream</h4>
+
+      <div className={css.main}>
+        <div className={css.controls}>
+          <input
+            className={css.input}
+            type="text"
+            value={input}
+            placeholder="Past magnet"
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <div className={css.buttons}>
+            <button onClick={play}>Play</button>
+            <button onClick={cancel}>Cancel</button>
+            <button onClick={stop}>Stop</button>
+          </div>
+          {/* <div>
+            <p>{error}</p>
+            <p>Download speed: {state.downloadSpeed}</p>
+            <p>Progress: {state.progress}</p>
+            <p>Ratio: {state.ratio}</p>
+          </div> */}
         </div>
+        <video className={css.video} src={activeUrl} controls />
       </div>
     </div>
   );
