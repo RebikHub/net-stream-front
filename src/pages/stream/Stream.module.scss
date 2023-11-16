@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  align-self: center;
+  font-size: 24px;
+  margin: 10px auto;
+}
+
+.main {
+  display: flex;
+  gap: 20px;
+}
+
+.controls {
+  width: 30%;
+}
+.video {
+  width: 70%;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  outline: none;
+  padding-left: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  & button {
+    cursor: pointer;
+    background-color: cornflowerblue;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+    border: none;
+    outline: none;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

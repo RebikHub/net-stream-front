@@ -1,15 +1,15 @@
 import { Route, Routes } from 'react-router-dom';
-import VideoStream from '../pages/VideoStream';
-import { Home } from '../pages/Home';
-import { Torrent } from '../pages/Torrent';
-import { Tv } from '../pages/Tv';
+import { Home } from '../pages/home/Home';
+import { Torrent } from '../pages/torrent/Torrent';
+import { Tv } from '../pages/tv/Tv';
+import { Stream } from '../pages/stream/Stream';
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />}>
         <Route path="/tv" element={<Tv />} />
-        <Route path="/stream" element={<VideoStream />} />
+        <Route path="/stream" element={<Stream />} />
         <Route path="/torrent" element={<Torrent />} />
       </Route>
     </Routes>

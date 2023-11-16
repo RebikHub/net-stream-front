@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { useWebTorrent } from '../services/web-torrent/client';
+import { useWebTorrent } from '../../services/web-torrent/client';
 
 export const Torrent = () => {
   const videoRef = useRef<HTMLVideoElement>(null);

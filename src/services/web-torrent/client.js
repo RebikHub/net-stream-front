@@ -68,8 +68,10 @@ export const useWebTorrent = (element) => {
     });
 
     return () => {
-      client._server.close();
-      client.destroy();
+      if (client) {
+        client._server?.close();
+        client.destroy();
+      }
     };
   }, [client, createStream, element]);
 
