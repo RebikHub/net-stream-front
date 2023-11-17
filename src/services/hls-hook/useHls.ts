@@ -34,9 +34,6 @@ export const useHls = ({ ref, url }: HookHls) => {
     // });
 
     hls.on(Hls.Events.ERROR, (event, data) => {
-      console.log('error-type: ', data.type);
-      console.log('error-details: ', data.details);
-
       if (data.fatal) {
         switch (data.type) {
           case Hls.ErrorTypes.MEDIA_ERROR:
@@ -45,12 +42,15 @@ export const useHls = ({ ref, url }: HookHls) => {
             break;
           case Hls.ErrorTypes.NETWORK_ERROR:
             console.error('fatal network error encountered', data);
+            hls.recoverMediaError();
             break;
           default:
             setUrlFailed({
               url,
               failed: true
             })
+            console.log('error hls destroy');
+
             hls.destroy();
             break;
         }
@@ -66,7 +66,8 @@ export const useHls = ({ ref, url }: HookHls) => {
   useEffect(() => {
 
     return () => {
-      hls.stopLoad()
+
+      hls.detachMedia()
     }
   }, [hls])
 

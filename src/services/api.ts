@@ -73,7 +73,8 @@ export const getSSEData = async (setData: any, infoHash: string) => {
 
   // Назначаем обработчик для сообщений от сервера SSE
   eventSource.addEventListener('message', (event) => {
-    setData(event.data);
+    const data = JSON.parse(event.data);
+    setData(data);
   });
 
   // Закрыть соединение SSE при размонтировании компонента
@@ -82,4 +83,5 @@ export const getSSEData = async (setData: any, infoHash: string) => {
   };
 
 };
+
 // a9172d6870e861d74e1582dabcb6cad4f5de9351
