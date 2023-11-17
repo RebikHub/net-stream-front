@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStreamServer } from '../../services/web-torrent/server';
-import { getSSEData, getStreamStop } from '../../services/api';
 import css from './Stream.module.scss';
+import { useEventSource } from '../../services/sse-hook/useEventSource';
 
 export const Stream = () => {
   const infoHash = '8FD93E1A5B18EBF27972E3E8650CD577C9075AC7'; // Замените на свою магнет-ссылку
   const name = 'John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4';
   const [input, setInput] = useState('');
   const [activeUrl, setActiveUrl] = useState('');
-  const [data, setData] = useState();
-  const { addMagnet } = useStreamServer();
+  const [data, setData] = useState<any>();
+  const { addMagnet, stopStream } = useStreamServer();
+  const eventSource = useEventSource({ setData, infoHash: input });
 
   const play = async () => {
     try {
@@ -29,19 +30,19 @@ export const Stream = () => {
     setInput('');
   };
 
-  const stop = async () => {
-    await getStreamStop(input);
+  const stop = () => {
+    eventSource?.close();
+    input && stopStream(input);
+    cancel();
   };
 
-  useEffect(() => {
-    if (input) {
-      getSSEData(setData, input);
-    }
-  }, [input]);
+  console.log(data);
 
   useEffect(() => {
-    console.log(data);
-  });
+    return () => {
+      eventSource?.close();
+    };
+  }, [eventSource]);
 
   return (
     <div className={css.container}>
@@ -61,12 +62,14 @@ export const Stream = () => {
             <button onClick={cancel}>Cancel</button>
             <button onClick={stop}>Stop</button>
           </div>
-          {/* <div>
-            <p>{error}</p>
-            <p>Download speed: {state.downloadSpeed}</p>
-            <p>Progress: {state.progress}</p>
-            <p>Ratio: {state.ratio}</p>
-          </div> */}
+          {data && (
+            <div>
+              {/* <p>{error}</p> */}
+              <p>Download speed: {data.speed || ''}</p>
+              <p>Progress: {data.progress || ''}</p>
+              <p>Ratio: {data.ratio || ''}</p>
+            </div>
+          )}
         </div>
         <video className={css.video} src={activeUrl} controls />
       </div>
