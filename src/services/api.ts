@@ -5,18 +5,12 @@ const baseUrl = process.env.REACT_APP_API_URL
 async function baseApi(url: string, config?: any) {
   try {
     const response = await fetch(baseUrl + url, config);
-
-    console.log(response);
-
     if (!response.ok) {
       throw new Error('Failed to fetch playlist');
     }
-
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error('Error fetching playlist:', error);
-    throw error;
   }
 };
 
@@ -84,4 +78,16 @@ export const getSSEData = async (setData: any, infoHash: string) => {
 
 };
 
-// a9172d6870e861d74e1582dabcb6cad4f5de9351
+// Search movies
+
+export const getSearchMovie = async (movie: string) => {
+  return await baseApi(`/search/${movie}`)
+}
+
+export const postMovie = async (movie: any) => {
+  return await baseApi('/search/magnet', {
+    method: "POST",
+    headers: { "Content-Type": "application/json", },
+    body: JSON.stringify(movie)
+  })
+}
