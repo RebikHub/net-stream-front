@@ -1,6 +1,7 @@
 export enum QueryKeys {
   GetPlaylist = 'GetPlaylist',
-  GetUpdateTvStreams = 'GetUpdateTvStreams'
+  GetUpdateTvStreams = 'GetUpdateTvStreams',
+  GetScanSearchMovie = 'GetScanSearchMovie',
 }
 
 export enum ChannelListUrl {
