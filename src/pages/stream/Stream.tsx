@@ -1,11 +1,12 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStreamServer } from '../../services/web-torrent/server';
 import css from './Stream.module.scss';
 import { useEventSource } from '../../services/sse-hook/useEventSource';
 import { useScanSearchMovie } from '../../services/query-hooks/useScanSearchMovie';
 import { usePostMovie } from '../../services/query-hooks/usePostMovie';
+import classNames from 'classnames';
 
-export interface MoviesData {
+export interface MoviesDataEn {
   title: string;
   time: string;
   seeds: number;
@@ -16,30 +17,37 @@ export interface MoviesData {
   infoHash?: string;
 }
 
+export interface MoviesDataRu {
+  dateTorrent: string;
+  gbTorrent: string;
+  nameTorrent: string;
+  urlTorrent: string;
+}
+
 export const Stream = () => {
   const [input, setInput] = useState('');
-  const [searchInput, setSearchInput] = useState('');
   const [activeUrl, setActiveUrl] = useState('');
   const [data, setData] = useState<any>();
   const { addMagnet, stopStream } = useStreamServer();
   const { mutate, magnet, isPending, reset } = usePostMovie();
-  const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(searchInput);
-  const eventSource = useEventSource({ setData, infoHash: input || magnet });
+  const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(input);
+  const eventSource = useEventSource({ setData, infoHash: magnet });
 
-  const play = useCallback(
-    async (input: string) => {
-      try {
-        if (input) {
-          const response = await addMagnet(input);
-          const name = response.find((item: any) => item.name.includes('.mp4') || item.name.includes('.mkv'));
-          setActiveUrl(`http://localhost:8000/video/stream/${input}/${name.name}`);
-        }
-      } catch (error) {
-        console.error(error);
+  const play = async () => {
+    try {
+      if (magnet) {
+        const response = await addMagnet(magnet);
+        const name = response.find(
+          (item: any) => item.name.includes('.mp4') || item.name.includes('.mkv') || item.name.includes('.avi')
+        );
+        console.log(name);
+
+        setActiveUrl(`http://localhost:8000/video/stream/${magnet}/${name.name}`);
       }
-    },
-    [addMagnet]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const cancel = () => {
     setActiveUrl('');
@@ -48,7 +56,6 @@ export const Stream = () => {
 
   const stop = () => {
     eventSource?.close();
-    input && stopStream(input);
     magnet && stopStream(magnet);
     magnet && reset();
     cancel();
@@ -62,11 +69,9 @@ export const Stream = () => {
     mutate(movie);
   };
 
-  useEffect(() => {
-    if (magnet) {
-      play(magnet);
-    }
-  }, [magnet, play]);
+  console.log(magnet);
+
+  console.log(searchMovieData);
 
   useEffect(() => {
     return () => {
@@ -88,8 +93,10 @@ export const Stream = () => {
             onChange={(e) => setInput(e.target.value)}
           />
           <div className={css.buttons}>
-            <button onClick={() => play(input)}>Play</button>
-            <button onClick={cancel}>Cancel</button>
+            <button onClick={search}>Search</button>
+            <button onClick={play} className={classNames({ [css.disabled]: !magnet })} disabled={!magnet}>
+              Play
+            </button>
             <button onClick={stop}>Stop</button>
           </div>
           {data && (
@@ -101,27 +108,21 @@ export const Stream = () => {
             </div>
           )}
           <div>
-            <label htmlFor="">
-              Search movie in treckers
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
-              />
-            </label>
-            <button onClick={search}>Search</button>
             {(isPending || isLoading) && <div>...Loading</div>}
             {searchMovieData && (
               <div>
                 <h5>Result</h5>
                 <ul>
-                  {searchMovieData.map((item: MoviesData) => (
-                    <li key={item.title} style={{ cursor: 'pointer' }} onClick={() => takeMovie(item)}>
-                      <p>{item.title}</p>
+                  {searchMovieData.map((item: MoviesDataRu) => (
+                    <li key={item.urlTorrent} style={{ cursor: 'pointer' }} onClick={() => takeMovie(item.urlTorrent)}>
+                      <p>{item.dateTorrent}</p>
+                      <p>{item.nameTorrent}</p>
+                      <p>{item.gbTorrent}</p>
+                      {/* <p>{item.title}</p>
                       <p>{item.time}</p>
                       <p>{item.peers}</p>
                       <p>{item.seeds}</p>
-                      <p>{item.provider}</p>
+                      <p>{item.provider}</p> */}
                       {/* <p>{item.infoHash}</p> */}
                     </li>
                   ))}
@@ -130,7 +131,7 @@ export const Stream = () => {
             )}
           </div>
         </div>
-        <div style={{ width: '700px', height: '400px' }}>
+        <div className={css.videoWrapper}>
           <video className={css.video} src={activeUrl} controls />
         </div>
       </div>
