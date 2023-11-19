@@ -17,12 +17,6 @@
 .controls {
   width: 30%;
 }
-
-.videoWrapper {
-  width: 100%;
-  max-height: 600px;
-}
-
 .video {
   width: 70%;
 }
@@ -56,9 +50,4 @@
       opacity: 0.7;
     }
   }
-}
-
-.disabled {
-  cursor: not-allowed !important;
-  opacity: 0.5;
 }

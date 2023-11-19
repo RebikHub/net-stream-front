@@ -1,31 +1,74 @@
-import { useMemo, useRef, useState } from 'react';
-import { useWebTorrent } from '../../services/web-torrent/client';
+import { useEffect, useState } from 'react';
+import { useStreamServer } from '../../services/web-torrent/server';
+import css from './Torrent.module.scss';
+import { useEventSource } from '../../services/sse-hook/useEventSource';
 
 export const Torrent = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [infoHash, setInfoHash] = useState('');
-  const { error, state, streamStart, streamClose } = useWebTorrent(videoRef);
+  const [input, setInput] = useState('');
+  const [activeUrl, setActiveUrl] = useState('');
+  const [data, setData] = useState<any>();
+  const { addMagnet, stopStream } = useStreamServer();
+  const eventSource = useEventSource({ setData, infoHash: input });
 
-  const videoUrl = useMemo(() => '', []);
+  const play = async () => {
+    try {
+      if (input) {
+        const response = await addMagnet(input);
+        const name = response.find((item: any) => item.name.includes('.mp4') || item.name.includes('.mkv'));
+        setActiveUrl(`http://localhost:8000/video/stream/${input}/${name.name}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const cancel = () => {
+    setActiveUrl('');
+    setInput('');
+  };
+
+  const stop = () => {
+    eventSource?.close();
+    input && stopStream(input);
+    cancel();
+  };
+
+  useEffect(() => {
+    return () => {
+      eventSource?.close();
+    };
+  }, [eventSource]);
 
   return (
-    <div>
-      <video ref={videoRef} controls style={{ width: '900px', height: '600px' }} />
-      <input type="text" onChange={(e) => setInfoHash(e.currentTarget.value)} value={infoHash} />
-      <button onClick={() => streamStart(infoHash)}>Play</button>
-      <button
-        onClick={() => {
-          streamClose(infoHash);
-          setInfoHash('');
-        }}
-      >
-        Close Stream
-      </button>
-      <div>
-        <p>{error}</p>
-        <p>Download speed: {state.downloadSpeed}</p>
-        <p>Progress: {state.progress}</p>
-        <p>Ratio: {state.ratio}</p>
+    <div className={css.container}>
+      <h4 className={css.header}>Torrent Stream</h4>
+
+      <div className={css.main}>
+        <div className={css.controls}>
+          <input
+            className={css.input}
+            type="text"
+            value={input}
+            placeholder="Past magnet"
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <div className={css.buttons}>
+            <button onClick={play}>Play</button>
+            <button onClick={cancel}>Cancel</button>
+            <button onClick={stop}>Stop</button>
+          </div>
+          {data && (
+            <div>
+              {/* <p>{error}</p> */}
+              <p>Download speed: {(data.speed / 1048576).toFixed(2) || ''} mb/s</p>
+              <p>Progress: {(data.progress * 100).toFixed(1) || ''} %</p>
+              <p>Ratio: {data.ratio || ''}</p>
+            </div>
+          )}
+        </div>
+        <div style={{ width: '700px', height: '400px' }}>
+          <video className={css.video} src={activeUrl} controls />
+        </div>
       </div>
     </div>
   );

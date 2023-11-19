@@ -15,9 +15,9 @@ export const Header = () => {
       <Link className={cn(css.link, { [css.active]: location.pathname === '/stream' })} to="/stream">
         Stream
       </Link>
-      {/* <Link className={cn(css.link, { [css.active]: location.pathname === '/torrent' })} to="/torrent">
+      <Link className={cn(css.link, { [css.active]: location.pathname === '/torrent' })} to="/torrent">
         Torrent
-      </Link> */}
+      </Link>
     </header>
   );
 };

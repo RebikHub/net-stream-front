@@ -18,48 +18,46 @@ export const useHls = ({ ref, url }: HookHls) => {
     failed: false
   })
 
-  if (Hls.isSupported() && ref.current) {
-    hls.attachMedia(ref.current);
+  useEffect(() => {
+    if (Hls.isSupported() && ref.current) {
+      hls.attachMedia(ref.current);
 
-    // hls.on(Hls.Events.MEDIA_ATTACHED, (event, data) => {
-    //   console.log('video and hls.js are now bound together !', data);
-    // });
+      // hls.on(Hls.Events.MEDIA_ATTACHED, (event, data) => {
+      //   console.log('video and hls.js are now bound together !', data);
+      // });
 
-    // hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-    //   console.log('manifest-parsed: ', data);
-    // });
+      // hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+      //   console.log('manifest-parsed: ', data);
+      // });
 
-    // hls.on(Hls.Events.MANIFEST_LOADED, function (event, data) {
-    //   console.log('Имя канала:', data.levels[0]);
-    // });
+      // hls.on(Hls.Events.MANIFEST_LOADED, function (event, data) {
+      //   console.log('Имя канала:', data.levels[0]);
+      // });
 
-    hls.on(Hls.Events.ERROR, (event, data) => {
-      if (data.fatal) {
-        switch (data.type) {
-          case Hls.ErrorTypes.MEDIA_ERROR:
-            console.log('fatal media error encountered, try to recover');
-            hls.recoverMediaError();
-            break;
-          case Hls.ErrorTypes.NETWORK_ERROR:
-            console.error('fatal network error encountered', data);
-            hls.recoverMediaError();
-            break;
-          default:
-            setUrlFailed({
-              url,
-              failed: true
-            })
-            console.log('error hls destroy');
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.log('fatal media error encountered, try to recover');
+              hls.recoverMediaError();
+              break;
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.error('fatal network error encountered', data);
+              hls.recoverMediaError();
+              break;
+            default:
+              console.log('error hls destroy');
 
-            hls.destroy();
-            break;
+              hls.destroy();
+              break;
+          }
         }
-      }
-    });
+      });
 
-  }
+    }
+  }, [hls, ref])
 
-  useMemo(() => {
+  useEffect(() => {
     hls.loadSource(url);
   }, [hls, url])
 

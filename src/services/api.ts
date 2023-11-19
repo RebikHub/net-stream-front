@@ -88,6 +88,6 @@ export const postMovie = async (movie: any) => {
   return await baseApi('/search/magnet', {
     method: "POST",
     headers: { "Content-Type": "application/json", },
-    body: JSON.stringify(movie)
+    body: JSON.stringify({ data: movie })
   })
 }
