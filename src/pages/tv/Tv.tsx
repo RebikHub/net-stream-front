@@ -40,7 +40,7 @@ export const Tv = () => {
         <div className={css.buttons}>
           <button onClick={() => setList(ChannelListUrl.ru)}>RU Channels</button>
           {/* <button onClick={() => setList(ChannelListUrl.en)}>EN Channels</button> */}
-          {/* <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button> */}
+          <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button>
           <button onClick={() => setList(ChannelListUrl.noname)}>Noname Channels</button>
           <button className={css.buttonUpdate} onClick={() => refetch()}>
             Update tv streams

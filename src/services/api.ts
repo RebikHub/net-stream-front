@@ -8,7 +8,8 @@ async function baseApi(url: string, config?: any) {
     if (!response.ok) {
       throw new Error('Failed to fetch playlist');
     }
-    return await response.json();
+
+    return await response.json()
   } catch (error) {
     console.error('Error fetching playlist:', error);
   }
@@ -81,11 +82,11 @@ export const getSSEData = async (setData: any, infoHash: string) => {
 // Search movies
 
 export const getSearchMovie = async (movie: string) => {
-  return await baseApi(`/search/${movie}`)
+  return await baseApi(`/search/ru/${movie}`)
 }
 
 export const postMovie = async (movie: any) => {
-  return await baseApi('/search/magnet', {
+  return await baseApi('/search/ru/magnet', {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: JSON.stringify({ data: movie })
