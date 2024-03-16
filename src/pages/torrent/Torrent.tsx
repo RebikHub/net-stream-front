@@ -3,6 +3,8 @@ import { useStreamServer } from '../../services/web-torrent/server';
 import css from './Torrent.module.scss';
 import { useEventSource } from '../../services/sse-hook/useEventSource';
 
+const url = process.env.REACT_APP_API_URL;
+
 export const Torrent = () => {
   const [input, setInput] = useState('');
   const [activeUrl, setActiveUrl] = useState('');
@@ -14,8 +16,10 @@ export const Torrent = () => {
     try {
       if (input) {
         const response = await addMagnet(input);
-        const name = response.find((item: any) => item.name.includes('.mp4') || item.name.includes('.mkv'));
-        setActiveUrl(`http://localhost:8000/video/stream/${input}/${name.name}`);
+        const name = response?.files?.find(
+          (item: any) => item.name.includes('.mp4') || item.name.includes('.mkv') || item.name.includes('.avi')
+        );
+        setActiveUrl(`${url}/video/stream/${input}/${name.name}`);
       }
     } catch (error) {
       console.error(error);

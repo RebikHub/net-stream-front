@@ -24,6 +24,8 @@ export interface MoviesDataRu {
   urlTorrent: string;
 }
 
+const url = process.env.REACT_APP_API_URL;
+
 export const Stream = () => {
   const [input, setInput] = useState('');
   const [activeUrl, setActiveUrl] = useState('');
@@ -37,12 +39,14 @@ export const Stream = () => {
     try {
       if (magnet) {
         const response = await addMagnet(magnet);
-        const name = response.find(
+        console.log(response);
+
+        const name = response?.files?.find(
           (item: any) => item.name.includes('.mp4') || item.name.includes('.mkv') || item.name.includes('.avi')
         );
         console.log(name);
 
-        setActiveUrl(`http://localhost:8000/video/stream/${magnet}/${name.name}`);
+        setActiveUrl(`${url}/video/stream/${magnet}/${name.name}`);
       }
     } catch (error) {
       console.error(error);
@@ -66,12 +70,10 @@ export const Stream = () => {
   };
 
   const takeMovie = (movie: any) => {
+    magnet && stopStream(magnet);
+    magnet && setActiveUrl('');
     mutate(movie);
   };
-
-  console.log(magnet);
-
-  console.log(searchMovieData);
 
   useEffect(() => {
     return () => {
@@ -113,8 +115,12 @@ export const Stream = () => {
               <div>
                 <h5>Result</h5>
                 <ul>
-                  {searchMovieData.map((item: MoviesDataRu) => (
-                    <li key={item.urlTorrent} style={{ cursor: 'pointer' }} onClick={() => takeMovie(item.urlTorrent)}>
+                  {searchMovieData.map((item: any) => (
+                    <li
+                      key={item.urlTorrent}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => takeMovie(item.urlTorrent || item?.magnet)}
+                    >
                       <p>{item.dateTorrent}</p>
                       <p>{item.nameTorrent}</p>
                       <p>{item.gbTorrent}</p>
