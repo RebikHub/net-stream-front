@@ -81,8 +81,8 @@ export const getSSEData = async (setData: any, infoHash: string) => {
 
 // Search movies
 
-export const getSearchMovie = async (movie: string) => {
-  return await baseApi(`/search/ru/${movie}`)
+export const getSearchMovie = async (movie: string, filter: number) => {
+  return await baseApi(`/search/ru/${filter}/${movie}`)
 }
 
 export const postMovie = async (movie: any) => {

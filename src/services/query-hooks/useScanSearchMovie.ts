@@ -3,10 +3,10 @@ import { getSearchMovie } from "../api"
 import { QueryKeys } from "./types"
 import { useMemo } from "react"
 
-export const useScanSearchMovie = (movie: string) => {
+export const useScanSearchMovie = (movie: string, filter: number) => {
   const { data, refetch, isLoading } = useQuery({
-    queryKey: [`${QueryKeys.GetScanSearchMovie}/${movie}`],
-    queryFn: () => getSearchMovie(movie),
+    queryKey: [`${QueryKeys.GetScanSearchMovie}/${filter}/${movie}`],
+    queryFn: () => getSearchMovie(movie, filter),
     refetchOnWindowFocus: false,
     enabled: false,
   })

@@ -18,7 +18,7 @@ export const Playlist: FC<Props> = ({ handleChannel, urlFailed, list, className 
 
   const onClickChannel = (channel: any) => {
     handleChannel(channel);
-    setCurrentChannel(channel.name);
+    setCurrentChannel(channel.url);
   };
 
   return (
@@ -27,7 +27,7 @@ export const Playlist: FC<Props> = ({ handleChannel, urlFailed, list, className 
         return (
           <li
             key={channel.url + channel.id}
-            className={cn(css.item, { [css.active]: channel.name === currentChannel })}
+            className={cn(css.item, { [css.active]: channel.url === currentChannel })}
             onClick={() => onClickChannel(channel)}
           >
             {channel.logo && (

@@ -19,12 +19,10 @@
 }
 
 .videoWrapper {
-  width: 100%;
-  max-height: 600px;
 }
 
 .video {
-  width: 70%;
+  width: 65vw;
 }
 .controls {
   display: flex;
@@ -61,4 +59,41 @@
 .disabled {
   cursor: not-allowed !important;
   opacity: 0.5;
+}
+
+.filters {
+  display: flex;
+  list-style: none;
+  gap: 1rem;
+}
+
+.item {
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: cadetblue;
+  color: white;
+  padding: 5px 10px;
+
+  &_active {
+    background-color: rgb(2, 71, 73);
+  }
+}
+
+.result {
+  & ul {
+    list-style: none;
+    padding: 0;
+    width: max-content;
+  }
+
+  & li {
+    cursor: pointer;
+    list-style: none;
+    display: grid;
+    grid-auto-flow: column;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.058);
+    }
+  }
 }

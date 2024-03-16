@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useStreamServer } from '../../services/web-torrent/server';
 import css from './Stream.module.scss';
 import { useEventSource } from '../../services/sse-hook/useEventSource';
 import { useScanSearchMovie } from '../../services/query-hooks/useScanSearchMovie';
 import { usePostMovie } from '../../services/query-hooks/usePostMovie';
 import classNames from 'classnames';
+import { filters } from '../../constants/filters';
 
 export interface MoviesDataEn {
   title: string;
@@ -30,9 +31,10 @@ export const Stream = () => {
   const [input, setInput] = useState('');
   const [activeUrl, setActiveUrl] = useState('');
   const [data, setData] = useState<any>();
+  const [filterId, setFilterId] = useState(1);
   const { addMagnet, stopStream } = useStreamServer();
   const { mutate, magnet, isPending, reset } = usePostMovie();
-  const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(input);
+  const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(input, filterId);
   const eventSource = useEventSource({ setData, infoHash: magnet });
 
   const play = async () => {
@@ -53,16 +55,17 @@ export const Stream = () => {
     }
   };
 
-  const cancel = () => {
-    setActiveUrl('');
-    setInput('');
-  };
-
-  const stop = () => {
+  const stop = useCallback(() => {
     eventSource?.close();
     magnet && stopStream(magnet);
     magnet && reset();
-    cancel();
+    setActiveUrl('');
+    setData(null);
+  }, [eventSource, magnet, reset, stopStream]);
+
+  const cancel = () => {
+    stop();
+    setInput('');
   };
 
   const search = () => {
@@ -70,8 +73,13 @@ export const Stream = () => {
   };
 
   const takeMovie = (movie: any) => {
-    magnet && stopStream(magnet);
-    magnet && setActiveUrl('');
+    if (magnet) {
+      eventSource?.close();
+      stopStream(magnet);
+      setActiveUrl('');
+      setData(null);
+    }
+
     mutate(movie);
   };
 
@@ -81,9 +89,25 @@ export const Stream = () => {
     };
   }, [eventSource]);
 
+  useEffect(() => {
+    stop();
+  }, []);
+
   return (
     <div className={css.container}>
       <h4 className={css.header}>Video Stream</h4>
+
+      <ul className={css.filters}>
+        {filters.map((item) => (
+          <li
+            key={item.id}
+            className={`${css.item} ${filterId === item.id ? css.item_active : ''}`}
+            onClick={() => setFilterId(item.id)}
+          >
+            {item.label}
+          </li>
+        ))}
+      </ul>
 
       <div className={css.main}>
         <div className={css.controls}>
@@ -100,6 +124,7 @@ export const Stream = () => {
               Play
             </button>
             <button onClick={stop}>Stop</button>
+            <button onClick={cancel}>Cancel</button>
           </div>
           {data && (
             <div>
@@ -109,37 +134,35 @@ export const Stream = () => {
               <p>Ratio: {data.ratio || ''}</p>
             </div>
           )}
-          <div>
-            {(isPending || isLoading) && <div>...Loading</div>}
-            {searchMovieData && (
-              <div>
-                <h5>Result</h5>
-                <ul>
-                  {searchMovieData.map((item: any) => (
-                    <li
-                      key={item.urlTorrent}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => takeMovie(item.urlTorrent || item?.magnet)}
-                    >
-                      <p>{item.dateTorrent}</p>
-                      <p>{item.nameTorrent}</p>
-                      <p>{item.gbTorrent}</p>
-                      {/* <p>{item.title}</p>
-                      <p>{item.time}</p>
-                      <p>{item.peers}</p>
-                      <p>{item.seeds}</p>
-                      <p>{item.provider}</p> */}
-                      {/* <p>{item.infoHash}</p> */}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+        </div>
+        {data && (
+          <div className={css.videoWrapper}>
+            <video className={css.video} src={activeUrl} controls />
           </div>
-        </div>
-        <div className={css.videoWrapper}>
-          <video className={css.video} src={activeUrl} controls />
-        </div>
+        )}
+      </div>
+      <div className={css.result}>
+        {(isPending || isLoading) && <div>...Loading</div>}
+        {searchMovieData && (
+          <>
+            <h5>Result</h5>
+            <ul>
+              {searchMovieData.map((item: any) => (
+                <li key={item.urlTorrent} onClick={() => takeMovie(item.urlTorrent || item?.magnet)}>
+                  <p>{item.dateTorrent}</p>
+                  <p>{item.nameTorrent}</p>
+                  <p>{item.gbTorrent}</p>
+                  {/* <p>{item.title}</p>
+                          <p>{item.time}</p>
+                          <p>{item.peers}</p>
+                          <p>{item.seeds}</p>
+                          <p>{item.provider}</p> */}
+                  {/* <p>{item.infoHash}</p> */}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
     </div>
   );
