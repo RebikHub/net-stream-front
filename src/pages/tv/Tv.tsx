@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Playlist } from '../../components/playlist/Playlist';
-import { Video } from '../../components/video/Video';
-import { FailedUrlType } from '../../services/hls-hook/useHls';
 import { useUpdateTvStreamQuery } from '../../services/query-hooks/useUpdateTvStreamQuery';
 import { ChannelListUrl } from '../../services/query-hooks/types';
 import css from './Tv.module.scss';
+import ReactPlayer from 'react-player';
 
 export const Tv = () => {
   const [tvUrl, setTvUrl] = useState('');
@@ -12,21 +11,12 @@ export const Tv = () => {
     url: tvUrl,
     failed: false,
   });
-  // const playerRef = useRef(null);
 
   const handleChannel = async (channel: any) => {
     console.log(channel);
 
     setTvUrl(channel.url);
-    // const response = await getChannelParser(channel.url);
-    // console.log('parser: ', response);
   };
-
-  const handleFailedUrl = useCallback((failedUrl: FailedUrlType) => {
-    console.log('handleFailedUrl: ', failedUrl);
-
-    setUrlFailed(failedUrl);
-  }, []);
 
   const { refetch } = useUpdateTvStreamQuery();
   const [list, setList] = useState<ChannelListUrl>();
@@ -49,7 +39,7 @@ export const Tv = () => {
       </header>
       <main className={css.main}>
         <Playlist className={css.playlist} handleChannel={handleChannel} urlFailed={urlFailed} list={list} />
-        <Video className={css.video} url={tvUrl} handleFailedUrl={handleFailedUrl} />
+        <ReactPlayer url={tvUrl} controls playing />
       </main>
     </div>
   );

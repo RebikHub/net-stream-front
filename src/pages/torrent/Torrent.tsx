@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStreamServer } from '../../services/web-torrent/server';
 import css from './Torrent.module.scss';
 import { useEventSource } from '../../services/sse-hook/useEventSource';
+import ReactPlayer from 'react-player';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -71,7 +72,7 @@ export const Torrent = () => {
           )}
         </div>
         <div style={{ width: '700px', height: '400px' }}>
-          <video className={css.video} src={activeUrl} controls />
+          <ReactPlayer className={css.video} url={activeUrl} controls playing />
         </div>
       </div>
     </div>

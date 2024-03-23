@@ -6,6 +6,7 @@ import { useScanSearchMovie } from '../../services/query-hooks/useScanSearchMovi
 import { usePostMovie } from '../../services/query-hooks/usePostMovie';
 import classNames from 'classnames';
 import { filters } from '../../constants/filters';
+import ReactPlayer from 'react-player';
 
 export interface MoviesDataEn {
   title: string;
@@ -137,7 +138,7 @@ export const Stream = () => {
         </div>
         {data && (
           <div className={css.videoWrapper}>
-            <video className={css.video} src={activeUrl} controls />
+            <ReactPlayer className={css.video} url={activeUrl} controls playing />
           </div>
         )}
       </div>
@@ -152,12 +153,6 @@ export const Stream = () => {
                   <p>{item.dateTorrent}</p>
                   <p>{item.nameTorrent}</p>
                   <p>{item.gbTorrent}</p>
-                  {/* <p>{item.title}</p>
-                          <p>{item.time}</p>
-                          <p>{item.peers}</p>
-                          <p>{item.seeds}</p>
-                          <p>{item.provider}</p> */}
-                  {/* <p>{item.infoHash}</p> */}
                 </li>
               ))}
             </ul>
