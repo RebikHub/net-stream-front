@@ -1,6 +1,6 @@
 import { ChannelListUrl } from "./query-hooks/types";
 
-const baseUrl = process.env.REACT_APP_API_URL
+const baseUrl = import.meta.env.VITE_API_URL
 
 async function baseApi(url: string, config?: any) {
   try {
@@ -13,7 +13,7 @@ async function baseApi(url: string, config?: any) {
   } catch (error) {
     console.error('Error fetching playlist:', error);
   }
-};
+}
 
 export const getPlaylist = async (list: ChannelListUrl) => {
   return await baseApi(`/tv/playlist/${list}`)

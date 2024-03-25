@@ -1,5 +1,5 @@
 import Hls from "hls.js";
-import { RefObject, useEffect, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo } from "react";
 
 export type FailedUrlType = {
   url: string,
@@ -13,10 +13,6 @@ type HookHls = {
 
 export const useHls = ({ ref, url }: HookHls) => {
   const hls = useMemo(() => new Hls(), []);
-  const [urlFailed, setUrlFailed] = useState<FailedUrlType>({
-    url,
-    failed: false
-  })
 
   useEffect(() => {
     if (Hls.isSupported() && ref.current) {
@@ -34,7 +30,7 @@ export const useHls = ({ ref, url }: HookHls) => {
       //   console.log('Имя канала:', data.levels[0]);
       // });
 
-      hls.on(Hls.Events.ERROR, (event, data) => {
+      hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.MEDIA_ERROR:
@@ -69,6 +65,4 @@ export const useHls = ({ ref, url }: HookHls) => {
     }
   }, [hls])
 
-
-  return { urlFailed }
 }

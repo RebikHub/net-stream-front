@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 export const useEventSource = ({ setData, infoHash }: { setData: any, infoHash: string }) => {
-  const baseUrl = process.env.REACT_APP_API_URL;
+  const baseUrl = import.meta.env.VITE_API_URL;
   const source = useRef<EventSource>()
 
   useEffect(() => {

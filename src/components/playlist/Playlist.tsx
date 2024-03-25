@@ -1,18 +1,16 @@
-import { FC, useState } from 'react';
-import cn from 'classnames';
-import { FailedUrlType } from '../../services/hls-hook/useHls';
-import { ChannelListUrl } from '../../services/query-hooks/types';
-import { usePlaylistQuery } from '../../services/query-hooks/usePlaylistQuery';
-import css from './Playlist.module.scss';
+import { FC, useState } from "react";
+import cn from "classnames";
+import { ChannelListUrl } from "../../services/query-hooks/types";
+import { usePlaylistQuery } from "../../services/query-hooks/usePlaylistQuery";
+import css from "./Playlist.module.scss";
 
 type Props = {
   handleChannel: (channel: any) => void;
-  urlFailed: FailedUrlType;
   list?: ChannelListUrl;
   className?: string;
 };
 
-export const Playlist: FC<Props> = ({ handleChannel, urlFailed, list, className }) => {
+export const Playlist: FC<Props> = ({ handleChannel, list, className }) => {
   const { data } = usePlaylistQuery(list);
   const [currentChannel, setCurrentChannel] = useState();
 
@@ -27,7 +25,9 @@ export const Playlist: FC<Props> = ({ handleChannel, urlFailed, list, className 
         return (
           <li
             key={channel.url + channel.id}
-            className={cn(css.item, { [css.active]: channel.url === currentChannel })}
+            className={cn(css.item, {
+              [css.active]: channel.url === currentChannel,
+            })}
             onClick={() => onClickChannel(channel)}
           >
             {channel.logo && (

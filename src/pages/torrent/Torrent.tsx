@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useStreamServer } from '../../services/web-torrent/server';
-import css from './Torrent.module.scss';
-import { useEventSource } from '../../services/sse-hook/useEventSource';
-import ReactPlayer from 'react-player';
+import { useEffect, useState } from "react";
+import { useStreamServer } from "../../services/web-torrent/server";
+import css from "./Torrent.module.scss";
+import { useEventSource } from "../../services/sse-hook/useEventSource";
+import ReactPlayer from "react-player";
 
-const url = process.env.REACT_APP_API_URL;
+const url = import.meta.env.VITE_API_URL;
 
 export const Torrent = () => {
-  const [input, setInput] = useState('');
-  const [activeUrl, setActiveUrl] = useState('');
+  const [input, setInput] = useState("");
+  const [activeUrl, setActiveUrl] = useState("");
   const [data, setData] = useState<any>();
   const { addMagnet, stopStream } = useStreamServer();
   const eventSource = useEventSource({ setData, infoHash: input });
@@ -18,7 +18,10 @@ export const Torrent = () => {
       if (input) {
         const response = await addMagnet(input);
         const name = response?.files?.find(
-          (item: any) => item.name.includes('.mp4') || item.name.includes('.mkv') || item.name.includes('.avi')
+          (item: any) =>
+            item.name.includes(".mp4") ||
+            item.name.includes(".mkv") ||
+            item.name.includes(".avi")
         );
         setActiveUrl(`${url}/video/stream/${input}/${name.name}`);
       }
@@ -28,8 +31,8 @@ export const Torrent = () => {
   };
 
   const cancel = () => {
-    setActiveUrl('');
-    setInput('');
+    setActiveUrl("");
+    setInput("");
   };
 
   const stop = () => {
@@ -65,13 +68,15 @@ export const Torrent = () => {
           {data && (
             <div>
               {/* <p>{error}</p> */}
-              <p>Download speed: {(data.speed / 1048576).toFixed(2) || ''} mb/s</p>
-              <p>Progress: {(data.progress * 100).toFixed(1) || ''} %</p>
-              <p>Ratio: {data.ratio || ''}</p>
+              <p>
+                Download speed: {(data.speed / 1048576).toFixed(2) || ""} mb/s
+              </p>
+              <p>Progress: {(data.progress * 100).toFixed(1) || ""} %</p>
+              <p>Ratio: {data.ratio || ""}</p>
             </div>
           )}
         </div>
-        <div style={{ width: '700px', height: '400px' }}>
+        <div style={{ width: "700px", height: "400px" }}>
           <ReactPlayer className={css.video} url={activeUrl} controls playing />
         </div>
       </div>

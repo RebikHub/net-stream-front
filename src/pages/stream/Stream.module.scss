@@ -65,6 +65,9 @@
   display: flex;
   list-style: none;
   gap: 1rem;
+  justify-content: start;
+  flex-wrap: wrap;
+  padding: 0;
 }
 
 .item {
@@ -73,6 +76,7 @@
   background-color: cadetblue;
   color: white;
   padding: 5px 10px;
+  font: caption;
 
   &_active {
     background-color: rgb(2, 71, 73);
@@ -83,7 +87,7 @@
   & ul {
     list-style: none;
     padding: 0;
-    width: max-content;
+    width: 100%;
   }
 
   & li {
@@ -91,6 +95,7 @@
     list-style: none;
     display: grid;
     grid-auto-flow: column;
+    gap: 10px;
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.058);
