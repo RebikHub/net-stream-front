@@ -33,6 +33,7 @@ export const Stream = () => {
   const [activeUrl, setActiveUrl] = useState("");
   const [data, setData] = useState<any>();
   const [filterId, setFilterId] = useState(1);
+  const [listMovies, setListMovies] = useState({list: [], link: ''})
   const { addMagnet, stopStream } = useStreamServer();
   const { mutate, magnet, isPending, reset } = usePostMovie();
   const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(
@@ -68,11 +69,13 @@ export const Stream = () => {
     magnet && reset();
     setActiveUrl("");
     setData(null);
+    setListMovies({list: [], link: ''})
   }, [eventSource, magnet, reset, stopStream]);
 
   const cancel = () => {
     stop();
     setInput("");
+    setListMovies({list: [], link: ''})
   };
 
   const search = () => {
@@ -85,29 +88,38 @@ export const Stream = () => {
       stopStream(magnet);
       setActiveUrl("");
       setData(null);
+      setListMovies({list: [], link: ''})
     }
 
     mutate(movie, {
-      onSuccess: async (data) => {
+      onSuccess: async (data: any) => {
         console.log(data);
 
         if (data?.link) {
           const response = await addMagnet(data.link);
           console.log(response);
 
-          const name = response?.files?.find(
-            (item: any) =>
-              item.name.includes(".mp4") ||
-              item.name.includes(".mkv") ||
-              item.name.includes(".avi")
-          );
-          console.log(name);
+          if (response?.files) {
+            setListMovies({list: response.files, link: data.link})
+          }
 
-          setActiveUrl(`${url}/video/stream/${data.link}/${name.name}`);
+          // const name = response?.files?.find(
+          //   (item: any) =>
+          //     item.name.includes(".mp4") ||
+          //     item.name.includes(".mkv") ||
+          //     item.name.includes(".avi")
+          // );
+          // console.log(name);
+
+          // setActiveUrl(`${url}/video/stream/${data.link}/${name.name}`);
         }
       },
     });
   };
+
+  const choseMovie = (nameMovie: string) => {
+    setActiveUrl(`${url}/video/stream/${listMovies.link}/${nameMovie}`);
+  }
 
   useEffect(() => {
     return () => {
@@ -166,6 +178,11 @@ export const Stream = () => {
               <p>Ratio: {data.ratio || ""}</p>
             </div>
           )}
+          {listMovies.list.length === 1 ? <p style={{cursor: 'pointer'}} onClick={() => choseMovie(listMovies.list[0].name)}>{listMovies.list[0].name}</p> : 
+            listMovies.list.length > 0 ? <select onClick={(v) => choseMovie(v.target.value)}>
+              {listMovies.list.map((item: any) => <option value={item.name}>{item.name}</option>)}
+            </select> : null
+          }
         </div>
         {activeUrl ? (
           <div className={css.videoWrapper}>

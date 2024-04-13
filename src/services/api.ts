@@ -9,7 +9,7 @@ async function baseApi(url: string, config?: any) {
       throw new Error('Failed to fetch playlist');
     }
 
-    return await response.json()
+    return await response?.json()
   } catch (error) {
     console.error('Error fetching playlist:', error);
   }
