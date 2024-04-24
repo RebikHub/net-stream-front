@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUpdateTvStreams } from "../api";
-import { QueryKeys } from "./types";
-import { useMemo, useEffect } from "react";
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { getUpdateTvStreams } from '../api'
+import { QueryKeys } from './types'
+import { useMemo, useEffect } from 'react'
 
-export function useUpdateTvStreamQuery() {
+export function useUpdateTvStreamQuery () {
   const queryClient = useQueryClient()
   const { isError, isLoading, data, refetch, isSuccess } = useQuery({
     queryKey: [QueryKeys.GetUpdateTvStreams],
@@ -17,12 +17,10 @@ export function useUpdateTvStreamQuery() {
       queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.GetPlaylist],
-        refetchType: 'all',
+        refetchType: 'all'
       })
     }
-
   }, [isSuccess, queryClient])
-
 
   return useMemo(() => ({
     isError, isLoading, data, refetch

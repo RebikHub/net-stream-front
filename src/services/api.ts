@@ -1,17 +1,17 @@
-import { ChannelListUrl } from "./query-hooks/types";
+import { ChannelListUrl } from './query-hooks/types'
 
 const baseUrl = import.meta.env.VITE_API_URL
 
-async function baseApi(url: string, config?: any) {
+async function baseApi (url: string, config?: any) {
   try {
-    const response = await fetch(baseUrl + url, config);
+    const response = await fetch(baseUrl + url, config)
     if (!response.ok) {
-      throw new Error('Failed to fetch playlist');
+      throw new Error('Failed to fetch playlist')
     }
 
     return await response?.json()
   } catch (error) {
-    console.error('Error fetching playlist:', error);
+    console.error('Error fetching playlist:', error)
   }
 }
 
@@ -38,7 +38,7 @@ export const getPlayVideoStream = async (name: string, link: string) => {
 }
 
 export const getStreamStats = async () => {
-  return await baseApi(`/video/stream/stats`)
+  return await baseApi('/video/stream/stats')
 }
 
 export const getStreamAddMagnet = async (magnet: string) => {
@@ -51,8 +51,8 @@ export const getStreamStop = async (magnet: string) => {
 
 export const postTorrentLink = async (magnetLink: string) => {
   return await baseApi('/video/download', {
-    method: "POST",
-    headers: { "Content-Type": "application/json", },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       magnetLink
     }
@@ -60,24 +60,25 @@ export const postTorrentLink = async (magnetLink: string) => {
   })
 }
 
+export const startVLCPlayer = async (magnet: string, name: string) => {
+  return await baseApi(`/video/stream/start/${magnet}/${name}`)
+}
 
 export const getSSEData = async (setData: any, infoHash: string) => {
-
   // Парсим поток событий (SSE)
-  const eventSource = new EventSource(baseUrl + `/video/stream/stats/${infoHash}`);
+  const eventSource = new EventSource(baseUrl + `/video/stream/stats/${infoHash}`)
 
   // Назначаем обработчик для сообщений от сервера SSE
   eventSource.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
-    setData(data);
-  });
+    const data = JSON.parse(event.data)
+    setData(data)
+  })
 
   // Закрыть соединение SSE при размонтировании компонента
   return () => {
-    eventSource.close();
-  };
-
-};
+    eventSource.close()
+  }
+}
 
 // Search movies
 
@@ -87,8 +88,8 @@ export const getSearchMovie = async (movie: string, filter: number) => {
 
 export const postMovie = async (movie: any) => {
   return await baseApi('/search/ru/magnet', {
-    method: "POST",
-    headers: { "Content-Type": "application/json", },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ data: movie })
   })
 }

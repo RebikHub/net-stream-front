@@ -1,18 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { getPlaylist } from "../api";
-import { ChannelListUrl, QueryKeys } from "./types";
-import { useMemo } from "react";
+import { useQuery } from '@tanstack/react-query'
+import { getPlaylist } from '../api'
+import { ChannelListUrl, QueryKeys } from './types'
+import { useMemo } from 'react'
 
-export function usePlaylistQuery(list?: ChannelListUrl) {
-
+export function usePlaylistQuery (list?: ChannelListUrl) {
   const { isError, isLoading, data, refetch } = useQuery({
     queryKey: [`${QueryKeys.GetPlaylist}/${list}`],
-    queryFn: () => {
+    queryFn: async () => {
       if (list) {
-        return getPlaylist(list)
+        return await getPlaylist(list)
       }
     },
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false
   })
 
   return useMemo(() => ({

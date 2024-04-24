@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { Playlist } from "../../components/playlist/Playlist";
-import { useUpdateTvStreamQuery } from "../../services/query-hooks/useUpdateTvStreamQuery";
-import { ChannelListUrl } from "../../services/query-hooks/types";
-import css from "./Tv.module.scss";
-import ReactPlayer from "react-player";
+import { useState } from 'react'
+import { Playlist } from '../../components/playlist/Playlist'
+import { useUpdateTvStreamQuery } from '../../services/query-hooks/useUpdateTvStreamQuery'
+import { ChannelListUrl } from '../../services/query-hooks/types'
+import css from './Tv.module.scss'
+import ReactPlayer from 'react-player'
 
 export const Tv = () => {
-  const [tvUrl, setTvUrl] = useState("");
+  const [tvUrl, setTvUrl] = useState('')
 
   const handleChannel = async (channel: any) => {
-    console.log(channel);
+    console.log(channel)
 
-    setTvUrl(channel.url);
-  };
+    setTvUrl(channel.url)
+  }
 
-  const { refetch } = useUpdateTvStreamQuery();
-  const [list, setList] = useState<ChannelListUrl>();
+  const { refetch } = useUpdateTvStreamQuery()
+  const [list, setList] = useState<ChannelListUrl>()
 
   // при переходе на другую страницу продолжает подгружать данные тв канала
 
@@ -32,7 +32,7 @@ export const Tv = () => {
           <button onClick={() => setList(ChannelListUrl.noname)}>
             Noname Channels
           </button>
-          <button className={css.buttonUpdate} onClick={() => refetch()}>
+          <button className={css.buttonUpdate} onClick={async () => await refetch()}>
             Update tv streams
           </button>
         </div>
@@ -46,5 +46,5 @@ export const Tv = () => {
         <ReactPlayer url={tvUrl} controls playing />
       </main>
     </div>
-  );
-};
+  )
+}
