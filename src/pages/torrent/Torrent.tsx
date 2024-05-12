@@ -4,7 +4,7 @@ import css from './Torrent.module.scss'
 import { useEventSource } from '../../services/sse-hook/useEventSource'
 import ReactPlayer from 'react-player'
 
-const url = import.meta.env.VITE_API_URL
+const url: string = import.meta.env.VITE_API_URL
 
 export const Torrent = () => {
   const [input, setInput] = useState('')
@@ -23,7 +23,9 @@ export const Torrent = () => {
             item.name.includes('.mkv') ||
             item.name.includes('.avi')
         )
-        setActiveUrl(`${url}/video/stream/${input}/${name.name}`)
+        if (name != null) {
+          setActiveUrl(`${url}/video/stream/${input}/${name.name}`)
+        }
       }
     } catch (error) {
       console.error(error)

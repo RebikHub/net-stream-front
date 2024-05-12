@@ -1,17 +1,12 @@
 import Hls from 'hls.js'
-import { RefObject, useEffect, useMemo } from 'react'
-
-export interface FailedUrlType {
-  url: string
-  failed: boolean
-}
+import { useEffect, useMemo, useRef } from 'react'
 
 interface HookHls {
-  ref: RefObject<HTMLVideoElement>
   url: string
 }
 
-export const useHls = ({ ref, url }: HookHls) => {
+export const useHls = ({ url }: HookHls) => {
+  const ref = useRef<HTMLVideoElement>(null);
   const hls = useMemo(() => new Hls(), [])
 
   useEffect(() => {
@@ -50,15 +45,20 @@ export const useHls = ({ ref, url }: HookHls) => {
         }
       })
     }
-  }, [hls, ref])
+  }, [hls, ref.current])
 
   useEffect(() => {
+    
     hls.loadSource(url)
+
   }, [hls, url])
 
   useEffect(() => {
     return () => {
       hls.detachMedia()
+      hls.destroy()
     }
   }, [hls])
+
+  return {ref}
 }

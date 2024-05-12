@@ -3,12 +3,12 @@ import { Playlist } from '../../components/playlist/Playlist'
 import { useUpdateTvStreamQuery } from '../../services/query-hooks/useUpdateTvStreamQuery'
 import { ChannelListUrl } from '../../services/query-hooks/types'
 import css from './Tv.module.scss'
-import ReactPlayer from 'react-player'
+import { VideoPlayer } from '../../components/player/VideoPlayer'
 
 export const Tv = () => {
   const [tvUrl, setTvUrl] = useState('')
 
-  const handleChannel = async (channel: any) => {
+  const handleChannel = (channel: any) => {
     console.log(channel)
 
     setTvUrl(channel.url)
@@ -43,7 +43,8 @@ export const Tv = () => {
           handleChannel={handleChannel}
           list={list}
         />
-        <ReactPlayer url={tvUrl} controls playing />
+        <VideoPlayer className={css.player} url={tvUrl} />
+        {/* <ReactPlayer url={tvUrl} controls playing /> */}
       </main>
     </div>
   )

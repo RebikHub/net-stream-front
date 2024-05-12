@@ -9,7 +9,7 @@ export const AppRoutes = () => {
     <Routes>
       <Route path='/' element={<Home />}>
         <Route path='/tv' element={<Tv />} />
-        <Route path='/stream' element={<Stream />} />
+        <Route path='/stream' index element={<Stream />} />
         <Route path='/torrent' element={<Torrent />} />
       </Route>
     </Routes>

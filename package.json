@@ -13,17 +13,15 @@
     "standard-fix": "npx ts-standard --fix"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.4.3",
+    "@tanstack/react-query": "^5.36.0",
     "axios": "^1.6.0",
     "classnames": "^2.3.2",
-    "hls.js": "^1.4.12",
-    "prettier": "^3.0.3",
+    "hls.js": "^1.5.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-player": "^2.15.1",
     "react-router-dom": "^6.17.0",
     "sass": "^1.69.5",
-    "typescript": "^4.9.5",
     "webtorrent": "^2.1.27"
   },
   "devDependencies": {
@@ -38,6 +36,7 @@
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-react": "^7.34.1",
     "globals": "^15.1.0",
+    "prettier": "^3.0.3",
     "ts-standard": "^12.0.2",
     "typescript": "^5.2.2",
     "typescript-eslint": "^7.8.0",
