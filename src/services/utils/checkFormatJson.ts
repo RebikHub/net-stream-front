@@ -1,8 +1,8 @@
-export function isJSONString(str: any) {
+export function isJSONString (str: any) {
   try {
-    JSON.parse(str);
-    return true;
+    JSON.parse(str)
+    return true
   } catch (error) {
-    return false;
+    return false
   }
 }

@@ -1,48 +1,53 @@
-import { useEffect, useState } from 'react';
-import { useStreamServer } from '../../services/web-torrent/server';
-import css from './Torrent.module.scss';
-import { useEventSource } from '../../services/sse-hook/useEventSource';
-import ReactPlayer from 'react-player';
+import { useEffect, useState } from 'react'
+import { useStreamServer } from '../../services/web-torrent/server'
+import css from './Torrent.module.scss'
+import { useEventSource } from '../../services/sse-hook/useEventSource'
+import ReactPlayer from 'react-player'
 
-const url = process.env.REACT_APP_API_URL;
+const url: string = import.meta.env.VITE_API_URL
 
 export const Torrent = () => {
-  const [input, setInput] = useState('');
-  const [activeUrl, setActiveUrl] = useState('');
-  const [data, setData] = useState<any>();
-  const { addMagnet, stopStream } = useStreamServer();
-  const eventSource = useEventSource({ setData, infoHash: input });
+  const [input, setInput] = useState('')
+  const [activeUrl, setActiveUrl] = useState('')
+  const [data, setData] = useState<any>()
+  const { addMagnet, stopStream } = useStreamServer()
+  const eventSource = useEventSource({ setData, infoHash: input })
 
   const play = async () => {
     try {
       if (input) {
-        const response = await addMagnet(input);
+        const response = await addMagnet(input)
         const name = response?.files?.find(
-          (item: any) => item.name.includes('.mp4') || item.name.includes('.mkv') || item.name.includes('.avi')
-        );
-        setActiveUrl(`${url}/video/stream/${input}/${name.name}`);
+          (item: any) =>
+            item.name.includes('.mp4') ||
+            item.name.includes('.mkv') ||
+            item.name.includes('.avi')
+        )
+        if (name != null) {
+          setActiveUrl(`${url}/video/stream/${input}/${name.name}`)
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   const cancel = () => {
-    setActiveUrl('');
-    setInput('');
-  };
+    setActiveUrl('')
+    setInput('')
+  }
 
   const stop = () => {
-    eventSource?.close();
-    input && stopStream(input);
-    cancel();
-  };
+    eventSource?.close()
+    input && stopStream(input)
+    cancel()
+  }
 
   useEffect(() => {
     return () => {
-      eventSource?.close();
-    };
-  }, [eventSource]);
+      eventSource?.close()
+    }
+  }, [eventSource])
 
   return (
     <div className={css.container}>
@@ -52,9 +57,9 @@ export const Torrent = () => {
         <div className={css.controls}>
           <input
             className={css.input}
-            type="text"
+            type='text'
             value={input}
-            placeholder="Past magnet"
+            placeholder='Past magnet'
             onChange={(e) => setInput(e.target.value)}
           />
           <div className={css.buttons}>
@@ -65,7 +70,9 @@ export const Torrent = () => {
           {data && (
             <div>
               {/* <p>{error}</p> */}
-              <p>Download speed: {(data.speed / 1048576).toFixed(2) || ''} mb/s</p>
+              <p>
+                Download speed: {(data.speed / 1048576).toFixed(2) || ''} mb/s
+              </p>
               <p>Progress: {(data.progress * 100).toFixed(1) || ''} %</p>
               <p>Ratio: {data.ratio || ''}</p>
             </div>
@@ -76,5 +83,5 @@ export const Torrent = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

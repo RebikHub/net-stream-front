@@ -1,14 +1,18 @@
-import { useQuery } from "@tanstack/react-query"
-import { getSearchMovie } from "../api"
-import { QueryKeys } from "./types"
-import { useMemo } from "react"
+import { QueryObserverResult, RefetchOptions, useQuery } from '@tanstack/react-query'
+import { ResponseSearchMovie, getSearchMovie } from '../api'
+import { QueryKeys } from './types'
+import { useMemo } from 'react'
 
-export const useScanSearchMovie = (movie: string, filter: number) => {
+export const useScanSearchMovie = (movie: string, filter: number): {
+  searchMovieData?: ResponseSearchMovie
+  getSearchMovie: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>
+  isLoading: boolean
+} => {
   const { data, refetch, isLoading } = useQuery({
     queryKey: [`${QueryKeys.GetScanSearchMovie}/${filter}/${movie}`],
-    queryFn: () => getSearchMovie(movie, filter),
+    queryFn: async () => await getSearchMovie(movie, filter),
     refetchOnWindowFocus: false,
-    enabled: false,
+    enabled: false
   })
 
   return useMemo(() => ({

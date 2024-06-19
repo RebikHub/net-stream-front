@@ -1,26 +1,17 @@
-import Hls from "hls.js";
-import { RefObject, useEffect, useMemo, useState } from "react";
+import Hls from 'hls.js'
+import { useEffect, useMemo, useRef } from 'react'
 
-export type FailedUrlType = {
-  url: string,
-  failed: boolean
+interface HookHls {
+  url: string
 }
 
-type HookHls = {
-  ref: RefObject<HTMLVideoElement>;
-  url: string;
-}
-
-export const useHls = ({ ref, url }: HookHls) => {
-  const hls = useMemo(() => new Hls(), []);
-  const [urlFailed, setUrlFailed] = useState<FailedUrlType>({
-    url,
-    failed: false
-  })
+export const useHls = ({ url }: HookHls) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  const hls = useMemo(() => new Hls(), [])
 
   useEffect(() => {
-    if (Hls.isSupported() && ref.current) {
-      hls.attachMedia(ref.current);
+    if (Hls.isSupported() && (ref.current != null)) {
+      hls.attachMedia(ref.current)
 
       // hls.on(Hls.Events.MEDIA_ATTACHED, (event, data) => {
       //   console.log('video and hls.js are now bound together !', data);
@@ -34,41 +25,40 @@ export const useHls = ({ ref, url }: HookHls) => {
       //   console.log('Имя канала:', data.levels[0]);
       // });
 
-      hls.on(Hls.Events.ERROR, (event, data) => {
+      hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.MEDIA_ERROR:
-              console.log('fatal media error encountered, try to recover');
-              hls.recoverMediaError();
-              break;
+              console.log('fatal media error encountered, try to recover')
+              hls.recoverMediaError()
+              break
             case Hls.ErrorTypes.NETWORK_ERROR:
-              console.error('fatal network error encountered', data);
-              hls.recoverMediaError();
-              break;
+              console.error('fatal network error encountered', data)
+              hls.recoverMediaError()
+              break
             default:
-              console.log('error hls destroy');
+              console.log('error hls destroy')
 
-              hls.destroy();
-              break;
+              hls.destroy()
+              break
           }
         }
-      });
-
+      })
     }
-  }, [hls, ref])
+  }, [hls, ref.current])
 
   useEffect(() => {
-    hls.loadSource(url);
+    
+    hls.loadSource(url)
+
   }, [hls, url])
 
   useEffect(() => {
-
     return () => {
-
       hls.detachMedia()
+      hls.destroy()
     }
   }, [hls])
 
-
-  return { urlFailed }
+  return {ref}
 }

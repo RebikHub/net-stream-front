@@ -35,11 +35,17 @@
 
 .main {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
+  gap: 2rem;
   padding-bottom: 1rem;
 }
 
 .playlist {
   min-width: 30%;
   height: 100vh;
+}
+
+.player {
+  width: 60%;
+  height: fit-content;
 }
