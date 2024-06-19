@@ -28,7 +28,6 @@ export const Tv = () => {
             RU Channels
           </button>
           {/* <button onClick={() => setList(ChannelListUrl.en)}>EN Channels</button> */}
-          {/* <button onClick={() => setList(ChannelListUrl.nsfw)}>XXX Channels</button> */}
           <button onClick={() => setList(ChannelListUrl.noname)}>
             Noname Channels
           </button>

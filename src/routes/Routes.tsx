@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { Home } from '../pages/home/Home'
 import { Torrent } from '../pages/torrent/Torrent'
 import { Tv } from '../pages/tv/Tv'
@@ -8,8 +8,9 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />}>
+      <Route index element={<Navigate to="/stream" replace />} />
+        <Route path='/stream' element={<Stream />} />
         <Route path='/tv' element={<Tv />} />
-        <Route path='/stream' index element={<Stream />} />
         <Route path='/torrent' element={<Torrent />} />
       </Route>
     </Routes>

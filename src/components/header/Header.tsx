@@ -6,9 +6,9 @@ export const Header = () => {
   const location = useLocation()
   return (
     <header className={css.header}>
-      <Link className={cn(css.link, { [css.active]: location.pathname === '/' })} to='/'>
+      {/* <Link className={cn(css.link, { [css.active]: location.pathname === '/' })} to='/'>
         Home
-      </Link>
+      </Link> */}
       <Link className={cn(css.link, { [css.active]: location.pathname === '/tv' })} to='/tv'>
         TV
       </Link>
