@@ -8,7 +8,7 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />}>
-      <Route index element={<Navigate to="/stream" replace />} />
+        <Route index element={<Navigate to='/stream' replace />} />
         <Route path='/stream' element={<Stream />} />
         <Route path='/tv' element={<Tv />} />
         <Route path='/torrent' element={<Torrent />} />

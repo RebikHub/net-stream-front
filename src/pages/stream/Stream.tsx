@@ -10,6 +10,7 @@ import ReactPlayer from 'react-player'
 import classNames from 'classnames'
 import { startVLCPlayer } from '../../services/api'
 import { catchError } from '../../services/utils/catchError'
+import imdb from '../../services/imdb'
 
 export interface MoviesDataEn {
   title: string
@@ -123,6 +124,15 @@ export const Stream: FC = () => {
     setActiveUrl(`${url}/video/stream/${listMovies.link}/${nameMovie}`)
   }
 
+  const getImdbFilms = async () => {
+    const response = await imdb.getSearchMovie(input)
+    console.log(response);
+    
+    if (response) {
+      console.log(response);
+    }
+  }
+
   useEffect(() => {
     return () => {
       eventSource?.close()
@@ -163,6 +173,7 @@ export const Stream: FC = () => {
             onChange={(e) => setInput(e.target.value)}
           />
           <div className={css.buttons}>
+            <button onClick={getImdbFilms}>IMDB</button>
             <button onClick={search}>Search</button>
             <button
               onClick={play}
@@ -176,12 +187,10 @@ export const Stream: FC = () => {
           </div>
           {data != null && (
             <div>
-              {/* <p>{error}</p> */}
               <p>
                 Download speed: {(data.speed / 1048576).toFixed(2)} mb/s
               </p>
               <p>Progress: {(data.progress * 100).toFixed(1)} %</p>
-              <p>Ratio: {data.ratio}</p>
             </div>
           )}
           {listMovies.list.length === 1

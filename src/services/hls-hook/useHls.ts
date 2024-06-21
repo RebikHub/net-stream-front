@@ -6,7 +6,7 @@ interface HookHls {
 }
 
 export const useHls = ({ url }: HookHls) => {
-  const ref = useRef<HTMLVideoElement>(null);
+  const ref = useRef<HTMLVideoElement>(null)
   const hls = useMemo(() => new Hls(), [])
 
   useEffect(() => {
@@ -48,9 +48,7 @@ export const useHls = ({ url }: HookHls) => {
   }, [hls, ref.current])
 
   useEffect(() => {
-    
     hls.loadSource(url)
-
   }, [hls, url])
 
   useEffect(() => {
@@ -60,5 +58,5 @@ export const useHls = ({ url }: HookHls) => {
     }
   }, [hls])
 
-  return {ref}
+  return { ref }
 }
