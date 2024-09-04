@@ -15,15 +15,13 @@
 }
 
 .controls {
-  width: 30%;
-}
-
-.videoWrapper {
+  width: 100%;
 }
 
 .video {
   width: 65vw;
 }
+
 .controls {
   display: flex;
   flex-direction: column;
@@ -50,6 +48,7 @@
     padding: 10px 20px;
     border: none;
     outline: none;
+
     &:hover {
       opacity: 0.7;
     }

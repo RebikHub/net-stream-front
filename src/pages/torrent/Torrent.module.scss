@@ -11,15 +11,13 @@
 
 .main {
   display: flex;
-  gap: 20px;
+  // gap: 20px;
 }
 
 .controls {
-  width: 30%;
+  width: 100%;
 }
-.video {
-  width: 70%;
-}
+
 .controls {
   display: flex;
   flex-direction: column;
@@ -46,6 +44,7 @@
     padding: 10px 20px;
     border: none;
     outline: none;
+
     &:hover {
       opacity: 0.7;
     }

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface ResponseEventSource {
   speed: number
@@ -11,28 +11,62 @@ export interface ResponseEventSource {
   torrentUploadSpeed: string
 }
 
-export const useEventSource = ({ setData, infoHash }: { setData: any, infoHash?: string }): EventSource | undefined => {
-  const baseUrl: string = import.meta.env.VITE_API_URL
-  const source = useRef<EventSource>()
+const baseUrl: string = import.meta.env.VITE_API_URL
+
+export const useEventSource = (hash?: string | null): { eventSourceData: ResponseEventSource | null, clearEventSource: () => void, startEventSource: (infoHash: string) => void } => {
+  const source = useRef<EventSource | null>(null)
+  const [eventSourceData, setEventSourceData] = useState<ResponseEventSource | null>(null)
+
+  const clearEventSource = useCallback(() => {
+    if (source.current) {
+      source.current.close()
+      source.current = null
+    }
+
+    if (eventSourceData) {
+      setEventSourceData(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const startEventSource = useCallback((infoHash: string) => {
+    if (source.current) {
+      source.current.close()
+    }
+
+    source.current = new EventSource(baseUrl + `/video/stream/stats/${infoHash}`)
+
+    source.current.onmessage = (event) => {
+      try {
+        const data: ResponseEventSource = JSON.parse(event.data)
+        setEventSourceData(data)
+      } catch (error) {
+        console.error('Error parsing event data:', error)
+      }
+    }
+
+    source.current.onerror = (error) => {
+      console.error('SSE Error:', error)
+    }
+  }, [])
 
   useEffect(() => {
-    if (infoHash != null) {
-      source.current = new EventSource(baseUrl + `/video/stream/stats/${infoHash}`)
-
-      source.current.onmessage = (event) => {
-        const data: ResponseEventSource = JSON.parse(event.data)
-        setData(data)
-      }
-
-      source.current.onerror = (error) => {
-        console.error('SSE Error:', error)
-      }
+    if (hash) {
+      startEventSource(hash)
     }
+    console.log('render effect');
 
     return () => {
-      source.current?.close()
-    }
-  }, [baseUrl, infoHash, setData])
+      console.log('render return');
 
-  return source.current
+      clearEventSource()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hash])
+
+  return {
+    startEventSource,
+    eventSourceData,
+    clearEventSource
+  }
 }

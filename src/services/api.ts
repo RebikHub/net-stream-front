@@ -6,12 +6,18 @@ const baseApi = async (url: string, config?: any): Promise<any> => {
   try {
     const response = await fetch(baseUrl + url, config)
     if (!response.ok) {
-      throw new Error('Failed to fetch playlist')
+      throw new Error('Failed to fetch data')
     }
 
-    return await response?.json()
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      const jsonResponse = await response.json()
+      return jsonResponse
+    } else {
+      return null
+    }
   } catch (error) {
-    console.error('Error fetching playlist:', error)
+    console.error('Error fetching data:', error)
   }
 }
 
@@ -45,11 +51,18 @@ export interface ResponseStreamAddMagnet {
   files: Array<{
     name: string
     length: number
-  }>
+  }>,
+  infoHash: string
 }
 
-export const getStreamAddMagnet = async (magnet: string): Promise<ResponseStreamAddMagnet> => {
-  return await baseApi(`/video/stream/add/${magnet}`)
+export const postStreamAddMagnet = async (magnet: string): Promise<ResponseStreamAddMagnet> => {
+  return await baseApi('/video/stream/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      magnet
+    })
+  })
 }
 
 export const getStreamStop = async (magnet: string): Promise<any> => {
@@ -105,7 +118,7 @@ export const getSearchMovie = async (movie: string, filter: number): Promise<Res
   return await baseApi(`/search/ru/${filter}/${movie}`)
 }
 
-export const postMovie = async (movie: any): Promise<{ link: string }> => {
+export const postMovie = async (movie: any): Promise<{ link: string, hash: string }> => {
   return await baseApi('/search/ru/magnet', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -1,16 +1,15 @@
 import { FC, useCallback, useEffect, useState } from 'react'
-import { useStreamServer } from '../../services/web-torrent/server'
 import css from './Stream.module.scss'
-import { ResponseEventSource, useEventSource } from '../../services/sse-hook/useEventSource'
+import { useEventSource } from '../../services/sse-hook/useEventSource'
 import { useScanSearchMovie } from '../../services/query-hooks/useScanSearchMovie'
 import { usePostMovie } from '../../services/query-hooks/usePostMovie'
 // import classNames from "classnames";
 import { filters } from '../../constants/filters'
-import ReactPlayer from 'react-player'
+// import ReactPlayer from 'react-player'
 import classNames from 'classnames'
-import { startVLCPlayer } from '../../services/api'
+import { getStreamStop, postStreamAddMagnet, startVLCPlayer } from '../../services/api'
 import { catchError } from '../../services/utils/catchError'
-import imdb from '../../services/imdb'
+// import imdb from '../../services/imdb'
 
 export interface MoviesDataEn {
   title: string
@@ -30,12 +29,11 @@ export interface MoviesDataRu {
   urlTorrent: string
 }
 
-const url: string = import.meta.env.VITE_API_URL
+// const url: string = import.meta.env.VITE_API_URL
 
 export const Stream: FC = () => {
   const [input, setInput] = useState('')
-  const [activeUrl, setActiveUrl] = useState('')
-  const [data, setData] = useState<ResponseEventSource | null>(null)
+  // const [activeUrl, setActiveUrl] = useState('')
   const [filterId, setFilterId] = useState(1)
   const [movieName, setMovieName] = useState('')
   const [listMovies, setListMovies] = useState<{
@@ -43,21 +41,23 @@ export const Stream: FC = () => {
       name: string
       length: number
     }>
-    link: string
-  }>({ list: [], link: '' })
-  const { addMagnet, stopStream } = useStreamServer()
-  const { mutate, magnet, isPending, reset } = usePostMovie()
-  const { searchMovieData, getSearchMovie, isLoading } = useScanSearchMovie(
+    hash: string
+  }>({ list: [], hash: '' })
+  const { mutate, magnet, reset } = usePostMovie()
+  const { searchMovieData, getSearchMovie } = useScanSearchMovie(
     input,
     filterId
   )
-  const eventSource = useEventSource({ setData, infoHash: magnet })
+  const {
+    eventSourceData,
+    clearEventSource,
+  } = useEventSource(magnet?.hash)
 
   const play = (): void => {
     try {
-      if (listMovies.link !== '' && Boolean(movieName)) {
-        setActiveUrl('')
-        startVLCPlayer(listMovies.link, movieName).catch(catchError)
+      if (listMovies.hash !== '' && Boolean(movieName)) {
+        // setActiveUrl('')
+        startVLCPlayer(listMovies.hash, movieName).catch(catchError)
       }
     } catch (error) {
       console.error(error)
@@ -65,23 +65,22 @@ export const Stream: FC = () => {
   }
 
   const stop = useCallback(() => {
-    eventSource?.close()
+    clearEventSource()
     if (magnet != null) {
-      stopStream(magnet).catch(catchError)
+      getStreamStop(magnet.hash).catch(catchError)
       reset()
     }
 
-    setActiveUrl('')
+    // setActiveUrl('')
     setMovieName('')
-    setData(null)
-    setListMovies({ list: [], link: '' })
-  }, [eventSource, magnet, reset, stopStream])
+    setListMovies({ list: [], hash: '' })
+  }, [clearEventSource, magnet, reset])
 
   const cancel = (): void => {
     stop()
     setInput('')
     setMovieName('')
-    setListMovies({ list: [], link: '' })
+    setListMovies({ list: [], hash: '' })
   }
 
   const search = (): void => {
@@ -90,23 +89,22 @@ export const Stream: FC = () => {
 
   const takeMovie = (movie: string): void => {
     if (magnet != null) {
-      eventSource?.close()
-      stopStream(magnet).catch(catchError)
-      setActiveUrl('')
+      clearEventSource()
+      getStreamStop(magnet.hash).catch(catchError)
+      // setActiveUrl('')
       setMovieName('')
-      setData(null)
-      setListMovies({ list: [], link: '' })
+      setListMovies({ list: [], hash: '' })
     }
 
     mutate(movie, {
-      onSuccess: (data: { link: string }) => {
+      onSuccess: (data) => {
         console.log(data)
 
-        if (data.link !== '') {
-          addMagnet(data.link)
-            .then(({ files }) => {
+        if (data?.link) {
+          postStreamAddMagnet(data.link)
+            .then(({ files, infoHash }) => {
               console.log(files)
-              setListMovies({ list: files, link: data.link })
+              setListMovies({ list: files, hash: infoHash })
               if (files.length === 1) {
                 setMovieName(files[0].name)
               }
@@ -121,23 +119,23 @@ export const Stream: FC = () => {
 
   const choseMovie = (nameMovie: string): void => {
     setMovieName(nameMovie)
-    setActiveUrl(`${url}/video/stream/${listMovies.link}/${nameMovie}`)
+    // setActiveUrl(`${url}/video/stream/${listMovies.hash}/${nameMovie}`)
   }
 
-  const getImdbFilms = async () => {
-    const response = await imdb.getSearchMovie(input)
-    console.log(response);
-    
-    if (response) {
-      console.log(response);
-    }
-  }
+  // const getImdbFilms = async () => {
+  //   const response = await imdb.getSearchMovie(input)
+  //   console.log(response);
+
+  //   if (response) {
+  //     console.log(response);
+  //   }
+  // }
 
   useEffect(() => {
     return () => {
-      eventSource?.close()
+      clearEventSource()
     }
-  }, [eventSource])
+  }, [clearEventSource])
 
   useEffect(() => {
     stop()
@@ -145,6 +143,7 @@ export const Stream: FC = () => {
     return () => {
       stop()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -169,40 +168,40 @@ export const Stream: FC = () => {
             className={css.input}
             type='text'
             value={input}
-            placeholder='Past magnet'
+            placeholder='Search movie'
             onChange={(e) => setInput(e.target.value)}
           />
           <div className={css.buttons}>
-            <button onClick={getImdbFilms}>IMDB</button>
+            {/* <button onClick={getImdbFilms}>IMDB</button> */}
             <button onClick={search}>Search</button>
             <button
               onClick={play}
-              className={classNames({ [css.disabled]: !(Boolean(listMovies.link) && Boolean(movieName)) })}
-              disabled={!(Boolean(listMovies.link) && Boolean(movieName))}
+              className={classNames({ [css.disabled]: !(Boolean(listMovies.hash) && Boolean(movieName)) })}
+              disabled={!(Boolean(listMovies.hash) && Boolean(movieName))}
             >
               Play
             </button>
             <button onClick={stop}>Stop</button>
             <button onClick={cancel}>Cancel</button>
           </div>
-          {data != null && (
+          {eventSourceData != null && (
             <div>
               <p>
-                Download speed: {(data.speed / 1048576).toFixed(2)} mb/s
+                Download speed: {(eventSourceData.speed / 1048576).toFixed(2)} mb/s
               </p>
-              <p>Progress: {(data.progress * 100).toFixed(1)} %</p>
+              <p>Progress: {(eventSourceData.progress * 100).toFixed(1)} %</p>
             </div>
           )}
           {listMovies.list.length === 1
             ? (<p style={{ cursor: 'pointer' }} onClick={() => choseMovie(listMovies.list[0].name)}>{listMovies.list[0].name}</p>)
             : listMovies.list.length > 0
               ? (
-                <select onClick={(v) => choseMovie(v.currentTarget.value)}>
-                  {listMovies.list.map((item: any) => <option key={item.name} value={item.name}>{item.name}</option>)}
-                </select>)
+                <div>
+                  {listMovies.list.map((item: any) => <p key={item.name} style={{ cursor: 'pointer' }} onClick={() => choseMovie(item.name)}>{item.name}</p>)}
+                </div>)
               : null}
         </div>
-        {activeUrl !== ''
+        {/* {activeUrl !== ''
           ? (
             <div className={css.videoWrapper}>
               <ReactPlayer
@@ -214,7 +213,7 @@ export const Stream: FC = () => {
                 type='video/mp4'
               />
             </div>)
-          : (isPending || isLoading) && <div>...Loading</div>}
+          : (isPending || isLoading) && <div>...Loading</div>} */}
       </div>
       <div className={css.result}>
         {(searchMovieData != null) && (

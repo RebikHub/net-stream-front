@@ -1,53 +1,73 @@
-import { useEffect, useState } from 'react'
-import { useStreamServer } from '../../services/web-torrent/server'
+import { useCallback, useEffect, useState } from 'react'
 import css from './Torrent.module.scss'
 import { useEventSource } from '../../services/sse-hook/useEventSource'
-import ReactPlayer from 'react-player'
-
-const url: string = import.meta.env.VITE_API_URL
+import { getStreamStop, postStreamAddMagnet, startVLCPlayer } from '../../services/api'
+import { catchError } from '../../services/utils/catchError'
 
 export const Torrent = () => {
-  const [input, setInput] = useState('')
-  const [activeUrl, setActiveUrl] = useState('')
-  const [data, setData] = useState<any>()
-  const { addMagnet, stopStream } = useStreamServer()
-  const eventSource = useEventSource({ setData, infoHash: input })
+  const [input, setInput] = useState<string | null>(null)
+  const [listMovies, setListMovies] = useState<{
+    list: Array<{
+      name: string
+      length: number
+    }>
+    hash: string
+  }>({ list: [], hash: '' })
+  const { eventSourceData, clearEventSource, startEventSource } = useEventSource()
 
-  const play = async () => {
+  const play = (): void => {
     try {
       if (input) {
-        const response = await addMagnet(input)
-        const name = response?.files?.find(
-          (item: any) =>
-            item.name.includes('.mp4') ||
-            item.name.includes('.mkv') ||
-            item.name.includes('.avi')
-        )
-        if (name != null) {
-          setActiveUrl(`${url}/video/stream/${input}/${name.name}`)
-        }
+        postStreamAddMagnet(input)
+          .then(({ files, infoHash }) => {
+            console.log(files)
+            startEventSource(infoHash)
+            setListMovies({ list: files, hash: infoHash })
+          })
+          .catch((error: any) => {
+            console.error('Error adding magnet:', error)
+          })
       }
+
+
     } catch (error) {
       console.error(error)
     }
   }
 
-  const cancel = () => {
-    setActiveUrl('')
-    setInput('')
+  const choseMovie = (nameMovie: string): void => {
+    startVLCPlayer(listMovies.hash, nameMovie).then((res) => {
+      console.log('vlc start: ', res);
+
+    }).catch(catchError)
   }
 
-  const stop = () => {
-    eventSource?.close()
-    input && stopStream(input)
-    cancel()
+  const cancel = (): void => {
+    stop()
+    setInput('')
+    setListMovies({ list: [], hash: '' })
   }
+
+  const stop = useCallback(() => {
+    clearEventSource()
+    input && getStreamStop(input).catch(catchError)
+  }, [clearEventSource, input])
+
 
   useEffect(() => {
     return () => {
-      eventSource?.close()
+      clearEventSource()
     }
-  }, [eventSource])
+  }, [clearEventSource])
+
+  useEffect(() => {
+    stop()
+
+    return () => {
+      stop()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={css.container}>
@@ -58,7 +78,7 @@ export const Torrent = () => {
           <input
             className={css.input}
             type='text'
-            value={input}
+            value={input || ''}
             placeholder='Past magnet'
             onChange={(e) => setInput(e.target.value)}
           />
@@ -67,19 +87,24 @@ export const Torrent = () => {
             <button onClick={cancel}>Cancel</button>
             <button onClick={stop}>Stop</button>
           </div>
-          {data && (
+          {eventSourceData && (
             <div>
               {/* <p>{error}</p> */}
               <p>
-                Download speed: {(data.speed / 1048576).toFixed(2) || ''} mb/s
+                Download speed: {(eventSourceData.speed / 1048576).toFixed(2) || ''} mb/s
               </p>
-              <p>Progress: {(data.progress * 100).toFixed(1) || ''} %</p>
-              <p>Ratio: {data.ratio || ''}</p>
+              <p>Progress: {(eventSourceData.progress * 100).toFixed(1) || ''} %</p>
+              <p>Ratio: {eventSourceData.ratio || ''}</p>
             </div>
           )}
-        </div>
-        <div style={{ width: '700px', height: '400px' }}>
-          <ReactPlayer className={css.video} url={activeUrl} controls playing />
+          {listMovies.list.length === 1
+            ? (<p style={{ cursor: 'pointer' }} onClick={() => choseMovie(listMovies.list[0].name)}>{listMovies.list[0].name}</p>)
+            : listMovies.list.length > 0
+              ? (
+                <div>
+                  {listMovies.list.map((item: any) => <p key={item.name} style={{ cursor: 'pointer' }} onClick={() => choseMovie(item.name)}>{item.name}</p>)}
+                </div>)
+              : null}
         </div>
       </div>
     </div>
