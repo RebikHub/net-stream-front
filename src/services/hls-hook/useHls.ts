@@ -10,7 +10,7 @@ export const useHls = ({ url }: HookHls) => {
   const hls = useMemo(() => new Hls(), [])
 
   useEffect(() => {
-    if (Hls.isSupported() && (ref.current != null)) {
+    if (Hls.isSupported() && ref.current != null) {
       hls.attachMedia(ref.current)
 
       // hls.on(Hls.Events.MEDIA_ATTACHED, (event, data) => {
@@ -45,7 +45,7 @@ export const useHls = ({ url }: HookHls) => {
         }
       })
     }
-  }, [hls, ref.current])
+  }, [hls])
 
   useEffect(() => {
     hls.loadSource(url)

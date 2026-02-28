@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import css from './Torrent.module.scss'
 import { useEventSource } from '../../services/sse-hook/useEventSource'
-import { getStreamStop, postStreamAddMagnet, startVLCPlayer } from '../../services/api'
+import {
+  getStreamStop,
+  postStreamAddMagnet,
+  startVLCPlayer,
+} from '../../services/api'
 import { catchError } from '../../services/utils/catchError'
 
 export const Torrent = () => {
@@ -13,7 +17,8 @@ export const Torrent = () => {
     }>
     hash: string
   }>({ list: [], hash: '' })
-  const { eventSourceData, clearEventSource, startEventSource } = useEventSource()
+  const { eventSourceData, clearEventSource, startEventSource } =
+    useEventSource()
 
   const play = (): void => {
     try {
@@ -28,18 +33,17 @@ export const Torrent = () => {
             console.error('Error adding magnet:', error)
           })
       }
-
-
     } catch (error) {
       console.error(error)
     }
   }
 
   const choseMovie = (nameMovie: string): void => {
-    startVLCPlayer(listMovies.hash, nameMovie).then((res) => {
-      console.log('vlc start: ', res);
-
-    }).catch(catchError)
+    startVLCPlayer(listMovies.hash, nameMovie)
+      .then((res) => {
+        console.log('vlc start: ', res)
+      })
+      .catch(catchError)
   }
 
   const cancel = (): void => {
@@ -50,9 +54,10 @@ export const Torrent = () => {
 
   const stop = useCallback(() => {
     clearEventSource()
-    input && getStreamStop(input).catch(catchError)
+    if (input) {
+      getStreamStop(input).catch(catchError)
+    }
   }, [clearEventSource, input])
-
 
   useEffect(() => {
     return () => {
@@ -77,9 +82,9 @@ export const Torrent = () => {
         <div className={css.controls}>
           <input
             className={css.input}
-            type='text'
+            type="text"
             value={input || ''}
-            placeholder='Past magnet'
+            placeholder="Past magnet"
             onChange={(e) => setInput(e.target.value)}
           />
           <div className={css.buttons}>
@@ -91,20 +96,35 @@ export const Torrent = () => {
             <div>
               {/* <p>{error}</p> */}
               <p>
-                Download speed: {(eventSourceData.speed / 1048576).toFixed(2) || ''} mb/s
+                Download speed:{' '}
+                {(eventSourceData.speed / 1048576).toFixed(2) || ''} mb/s
               </p>
-              <p>Progress: {(eventSourceData.progress * 100).toFixed(1) || ''} %</p>
+              <p>
+                Progress: {(eventSourceData.progress * 100).toFixed(1) || ''} %
+              </p>
               <p>Ratio: {eventSourceData.ratio || ''}</p>
             </div>
           )}
-          {listMovies.list.length === 1
-            ? (<p style={{ cursor: 'pointer' }} onClick={() => choseMovie(listMovies.list[0].name)}>{listMovies.list[0].name}</p>)
-            : listMovies.list.length > 0
-              ? (
-                <div>
-                  {listMovies.list.map((item: any) => <p key={item.name} style={{ cursor: 'pointer' }} onClick={() => choseMovie(item.name)}>{item.name}</p>)}
-                </div>)
-              : null}
+          {listMovies.list.length === 1 ? (
+            <p
+              style={{ cursor: 'pointer' }}
+              onClick={() => choseMovie(listMovies.list[0].name)}
+            >
+              {listMovies.list[0].name}
+            </p>
+          ) : listMovies.list.length > 0 ? (
+            <div>
+              {listMovies.list.map((item: any) => (
+                <p
+                  key={item.name}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => choseMovie(item.name)}
+                >
+                  {item.name}
+                </p>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

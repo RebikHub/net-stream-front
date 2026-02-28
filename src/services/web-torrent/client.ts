@@ -7,7 +7,7 @@ export const useWebTorrent = (element: any) => {
   const [state, setState] = useState({
     progress: 0,
     downloadSpeed: 0,
-    ratio: 0
+    ratio: 0,
   })
 
   const [error, setError] = useState()
@@ -20,7 +20,9 @@ export const useWebTorrent = (element: any) => {
   const streamStart = useCallback(
     (infoHash: string) => {
       client.add(infoHash, (torrent: any) => {
-        const file = torrent.files.find((file: any) => file.name.endsWith('.mp4'))
+        const file = torrent.files.find((file: any) =>
+          file.name.endsWith('.mp4')
+        )
 
         file.streamTo(element.current)
       })
@@ -47,7 +49,7 @@ export const useWebTorrent = (element: any) => {
       setState({
         progress: client.progress,
         downloadSpeed: client.downloadSpeed,
-        ratio: client.ratio
+        ratio: client.ratio,
       })
     })
 
@@ -65,7 +67,7 @@ export const useWebTorrent = (element: any) => {
       state,
       createStream,
       streamClose,
-      streamStart
+      streamStart,
     }),
     [createStream, error, state, streamClose, streamStart]
   )
